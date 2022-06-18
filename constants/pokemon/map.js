@@ -1,22 +1,25 @@
-const { getEmoji } = require("./functions");
+const { getEmoji, getOffset, handleMovement } = require("./functions");
 
 class GameMap {
   constructor() {
-    let gameGrid = Array.from({ length: 1000 }).map(() => []);
+    const width = 50;
+    const height = 50;
+    let map = Array.from({ length: height }).map(() => []);
 
-    for (const row of gameGrid) {
-      while (row.length < 1000) {
-        row.push(0);
+    for (const row of map) {
+      while (row.length < width) {
+        row.push(1);
       }
     }
 
     const x = (width / 2).toFixed() - 1;
     const y = (height / 2).toFixed() - 1;
 
-    gameGrid[y][x] = 0; //Player
+    map[y][x] = 0; //Player
 
-    this.gameGrid = gameGrid;
+    this.map = map;
     this.pos = { x, y };
+    this.lastMove = "down";
   }
 
   getView(distance) {
@@ -35,16 +38,24 @@ class GameMap {
     return newMap;
   }
 
-  renderMap(distance) {
+  renderMap(distance = 3) {
     let str = "";
     let map = this.getView(distance);
     for (const row of map) {
       for (const index of row) {
-        str += getEmoji(index);
+        str += getEmoji(index, this.lastMove);
       }
       str += "\n";
     }
     return str;
+  }
+
+  movePlayer(id) {
+    this.lastMove = id;
+    const [x, y] = getOffset(id);
+    const returnValue = handleMovement(this, x, y);
+    this.map = returnValue.map;
+    this.pos = returnValue.pos;
   }
 }
 

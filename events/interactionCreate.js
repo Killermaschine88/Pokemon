@@ -13,7 +13,7 @@ module.exports = {
 
       try {
         await interaction.deferReply({ ephemeral: command?.ephemeral ? true : false });
-        command.execute(interaction);
+        await command.execute(interaction);
       } catch (e) {
         log(e.stack, "ERROR");
       }

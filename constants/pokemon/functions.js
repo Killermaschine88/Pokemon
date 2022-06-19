@@ -31,13 +31,11 @@ function handleMovement(game, x, y) {
 function canMove(game, x, y) {
   const move = game.map[game.pos.y + y][game.pos.x + x];
 
-  return [undefined, 2].includes(move)
+  return [undefined, 2].includes(move);
 }
 
 //Make working below here so it properly places the fields and shit in planned way
 
-function generateMap({ width, height }) {
-
-}
+function generateMap({ width, height }) {}
 
 module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap };

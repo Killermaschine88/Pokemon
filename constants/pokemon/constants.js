@@ -16,7 +16,7 @@ const emojis = {
   1: "<:GRASS:987633375537926184>",
   2: "<:GRASS_POKEMON:987635597516611654>",
   3: "<:WATER:987632979834712064>",
-  9: "<:air:962820785666416730>"
+  9: "<:air:962820785666416730>",
 };
 
 const row1 = new MessageActionRow().addComponents(new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle("SECONDARY"), new MessageButton().setEmoji("🔼").setCustomId("up").setStyle("SECONDARY"), new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle("SECONDARY"));

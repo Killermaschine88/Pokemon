@@ -5,7 +5,7 @@ class GameMap {
     const width = 50;
     const height = 50;
     //let map = Array.from({ length: height }).map(() => []);
-    
+
     const map = generateMap({ width, height });
 
     const x = (width / 2).toFixed() - 1;

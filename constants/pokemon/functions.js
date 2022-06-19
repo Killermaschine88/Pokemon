@@ -31,8 +31,7 @@ function handleMovement(game, x, y) {
 function canMove(game, x, y) {
   const move = game.map[game.pos.y + y][game.pos.x + x];
 
-  if ([undefined, 2].includes(move)) return false;
-  else return true;
+  return [undefined, 2].includes(move)
 }
 
 //Make working below here so it properly places the fields and shit in planned way

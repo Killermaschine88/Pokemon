@@ -1,16 +1,14 @@
-const { getEmoji, getOffset, handleMovement } = require("./functions");
+const { getEmoji, getOffset, handleMovement, generateBlock } = require("./functions");
 
 class GameMap {
   constructor() {
     const width = 50;
     const height = 50;
     let map = Array.from({ length: height }).map(() => []);
+    let currentX = 0;
+    let currentY = 0;
 
-    for (const row of map) {
-      while (row.length < width) {
-        row.push(1);
-      }
-    }
+    //Function here
 
     const x = (width / 2).toFixed() - 1;
     const y = (height / 2).toFixed() - 1;
@@ -38,7 +36,7 @@ class GameMap {
     return newMap;
   }
 
-  renderMap(distance = 3) {
+  renderMap(distance = 5) {
     let str = "";
     let map = this.getView(distance);
     for (const row of map) {

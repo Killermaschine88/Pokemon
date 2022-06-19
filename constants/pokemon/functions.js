@@ -37,31 +37,8 @@ function canMove(game, x, y) {
 
 //Make working below here so it properly places the fields and shit in planned way
 
-function generateBlock(map, currentX, currentY) {
-  const num = getRandomNumber(100);
-  if (num > 10) {
-    return { singleBlock: true, type: 1 };
-  } else {
-    [map, currentX, currentY] = placeField(map, currentX, currentY);
-    return [map, currentX, currentY];
-  }
+function generateMap({ width, height }) {
+
 }
 
-function placeField(map, currentX, currentY) {
-  const size = getRandomNumber(15);
-  let temp = 0;
-  let i = 0;
-  while (i < size) {
-    i++;
-    if (temp === 3) {
-      currentY++;
-    } else {
-      if (map[currentY]?.[currentX] === undefined) currentY++;
-      map[currentY][currentX] = 2;
-      currentX++;
-    }
-  }
-  return [map, currentX, currentY];
-}
-
-module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateBlock };
+module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap };

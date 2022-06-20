@@ -19,12 +19,8 @@ client.login(process.env.DISCORD_TOKEN);
 const fs = require("fs");
 
 //Catch errors that might slip
-try {
-  process.on("uncaughtException", (error) => console.log(error));
-  process.on("unhandledRejection", (error) => console.log(error));
-} catch (e) {
-  log(e.stack, "ERROR");
-}
+process.on("uncaughtException", (error) => console.log(error));
+process.on("unhandledRejection", (error) => console.log(error));
 
 //Event Handler
 const eventFiles = fs.readdirSync(__dirname + "/events").filter((file) => file.endsWith(".js"));

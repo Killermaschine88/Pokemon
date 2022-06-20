@@ -36,6 +36,8 @@ function canMove(game, x, y) {
 
 //Make working below here so it properly places the fields and shit in planned way
 
-function generateMap({ width, height }) {}
+function generateMap({ width, height }) {
+  let map = Array.from({ length: height }).map(() => []);
+}
 
 module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap };

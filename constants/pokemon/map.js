@@ -47,11 +47,13 @@ class GameMap {
   }
 
   movePlayer(id) {
+    //console.log(this.pos)
     this.lastMove = id;
     const [x, y] = getOffset(id);
     const returnValue = handleMovement(this, x, y);
     this.map = returnValue.map;
     this.pos = returnValue.pos;
+    //console.log(this.pos)
   }
 }
 

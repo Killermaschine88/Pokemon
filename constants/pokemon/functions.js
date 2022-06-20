@@ -31,13 +31,56 @@ function handleMovement(game, x, y) {
 function canMove(game, x, y) {
   const move = game.map[game.pos.y + y][game.pos.x + x];
 
-  return [undefined, 2].includes(move);
+  return ![undefined].includes(move);
 }
-
-//Make working below here so it properly places the fields and shit in planned way
 
 function generateMap({ width, height }) {
   let map = Array.from({ length: height }).map(() => []);
+  let mapGenerating = true;
+  let x = 0;
+  let y = 0;
+
+  while (mapGenerating) {
+    const randomNum = getRandomNumber(100);
+    if (randomNum > 5) {
+      if (![2].includes(map[y][x])) map[y][x] = 1;
+      x++;
+      if (x >= width) {
+        y++;
+        x = 0;
+      }
+    }
+    if (randomNum <= 1) {
+      const [fieldWidth, fieldHeight] = getFieldSize();
+
+      let newX = x;
+      let newY = y;
+
+      for (let i = 0; i < fieldHeight; i++) {
+        for (let j = 0; j < fieldWidth; j++) {
+          if (newY + j < width && newX + i < height) map[newY + j][newX + i] = 2;
+        }
+      }
+    }
+
+    if (mapFinished(map, width)) mapGenerating = false;
+  }
+  return map;
+}
+
+function mapFinished(map, width) {
+  return map.every((arr) => arr.length >= width);
+}
+
+function getFieldSize() {
+  //Width x Height
+  const fields = [
+    [5, 5],
+    [5, 8],
+    [3, 3],
+  ];
+
+  return fields[Math.floor(Math.random() * fields.length)];
 }
 
 module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap };

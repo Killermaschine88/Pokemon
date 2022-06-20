@@ -20,7 +20,8 @@ function getOffset(id) {
 
 function handleMovement(game, x, y) {
   if (canMove(game, x, y)) {
-    game.map[game.pos.y][game.pos.x] = 1; //Street
+    game.lastField = game.map[game.pos.y + y][game.pos.x + x]
+    game.map[game.pos.y][game.pos.x] = game.lastField === 2 ? 2 : 1; //Place field back after player gone
     game.map[game.pos.y + y][game.pos.x + x] = 0; //Player
     game.pos.y += y;
     game.pos.x += x;
@@ -41,16 +42,10 @@ function generateMap({ width, height }) {
   let y = 0;
 
   while (mapGenerating) {
-    const randomNum = getRandomNumber(100);
-    if (randomNum > 5) {
-      if (![2].includes(map[y][x])) map[y][x] = 1;
-      x++;
-      if (x >= width) {
-        y++;
-        x = 0;
-      }
-    }
-    if (randomNum <= 1) {
+    const randomNum = getRandomNumber(100, false);
+
+    if (randomNum <= 3) {
+      //Grass Chance
       const [fieldWidth, fieldHeight] = getFieldSize();
 
       let newX = x;
@@ -60,6 +55,13 @@ function generateMap({ width, height }) {
         for (let j = 0; j < fieldWidth; j++) {
           if (newY + j < width && newX + i < height) map[newY + j][newX + i] = 2;
         }
+      }
+    } else {
+      if (![2].includes(map[y][x])) map[y][x] = 1;
+      x++;
+      if (x >= width) {
+        y++;
+        x = 0;
       }
     }
 

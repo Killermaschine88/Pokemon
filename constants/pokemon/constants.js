@@ -24,4 +24,6 @@ const row2 = new MessageActionRow().addComponents(new MessageButton().setEmoji("
 const row3 = new MessageActionRow().addComponents(new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle("SECONDARY"), new MessageButton().setEmoji("🔽").setCustomId("down").setStyle("SECONDARY"), new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle("SECONDARY"));
 const rows = [row1, row2, row3];
 
-module.exports = { emojis, rows };
+const pokemonList = {}
+
+module.exports = { emojis, rows, pokemonList };

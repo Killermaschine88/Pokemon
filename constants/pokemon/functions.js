@@ -1,4 +1,4 @@
-const { emojis } = require("./constants");
+const { emojis, pokemonList } = require("./constants");
 const { getRandomNumber } = require("../util/functions");
 
 function getEmoji(name, way = "down") {
@@ -7,6 +7,11 @@ function getEmoji(name, way = "down") {
 }
 
 function updateEmbed(interaction, Game, embed) {
+  //If Pokemon spawned
+  if (Game.pokemonSpawned()) {
+  }
+
+  //If no pokemon spawned
   embed.setDescription(Game.renderMap());
   interaction.editReply({ embeds: [embed] });
 }
@@ -20,8 +25,11 @@ function getOffset(id) {
 
 function handleMovement(game, x, y) {
   if (canMove(game, x, y)) {
-    game.lastField = game.map[game.pos.y + y][game.pos.x + x]
-    game.map[game.pos.y][game.pos.x] = game.lastField === 2 ? 2 : 1; //Place field back after player gone
+    game.lastField = game.newField || 1;
+    game.newField = game.map[game.pos.y + y][game.pos.x + x];
+
+    //Moving Player
+    game.map[game.pos.y][game.pos.x] = getOldPositionField(game);
     game.map[game.pos.y + y][game.pos.x + x] = 0; //Player
     game.pos.y += y;
     game.pos.x += x;
@@ -33,6 +41,13 @@ function canMove(game, x, y) {
   const move = game.map[game.pos.y + y][game.pos.x + x];
 
   return ![undefined].includes(move);
+}
+
+function getOldPositionField(game) {
+  if (game.lastField === 1 && game.newField === 2) return 1;
+  else if (game.lastField === 2 && game.newField === 1) return 2;
+  else if (game.lastField === 2 && game.newField === 2) return 2;
+  else return 1;
 }
 
 function generateMap({ width, height }) {
@@ -85,4 +100,13 @@ function getFieldSize() {
   return fields[Math.floor(Math.random() * fields.length)];
 }
 
-module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap };
+function pokemonFound() {
+  const rn = getRandomNumber(100);
+  return rn <= 5;
+}
+
+function generateRandomPokemon() {
+  //Get list with like 10 pokemon for the time being
+}
+
+module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon };

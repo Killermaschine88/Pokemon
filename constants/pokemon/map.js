@@ -1,4 +1,4 @@
-const { getEmoji, getOffset, handleMovement, generateMap } = require("./functions");
+const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 
 class GameMap {
   constructor() {
@@ -53,6 +53,15 @@ class GameMap {
     this.map = returnValue.map;
     this.pos = returnValue.pos;
     this.lastField = returnValue.lastField;
+    this.newField = returnValue.newField;
+  }
+
+  pokemonSpawned() {
+    if (this.newField === 2) {
+      if (pokemonFound()) {
+        const foundPokemon = generateRandomPokemon();
+      }
+    }
   }
 }
 

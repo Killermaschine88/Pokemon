@@ -1,5 +1,6 @@
 const { emojis, pokemonList } = require("./constants");
 const { getRandomNumber } = require("../util/functions");
+const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 
 function getEmoji(name, way = "down") {
   if (name === 0) return emojis[name + way];
@@ -109,4 +110,33 @@ function generateRandomPokemon() {
   //Get list with like 10 pokemon for the time being
 }
 
-module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon };
+function generateProfileSelection(list) {
+  //Embed
+  const embed = new MessageEmbed().setTitle("Save Selection")
+  if(list.length > 0) {
+    let str = ""
+    for(const profile of list) {
+      str += `Profile ${profile.name}`
+    }
+    embed.setDescription(str)
+  } else {
+    embed.setDescription("No Saves found, please create a new one.")
+  }
+
+  //Components
+  const row = new MessageActionRow();
+  if (list.length > 0) {
+    let index = 0;
+    for (const profile of list) {
+      row.components.push(new MessageButton().setCustomId(index).setLabel(`Profile ${profile.name}`).setStyle("SECONDARY"));
+      index++;
+    }
+    if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newSave").setLabel("Create new Profile").setStyle("SECONDARY"));
+  } else {
+    row.components.push(new MessageButton().setCustomId("newSave").setLabel("Create new Save").setStyle("SECONDARY"));
+  }
+
+  return { embeds: [embed], components: [row] };
+}
+
+module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection };

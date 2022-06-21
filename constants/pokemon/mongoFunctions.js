@@ -1,5 +1,5 @@
 async function createProfile(interaction, userOptions) {
-  const res = await interaction.client.mongo.updateOne(
+  await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {
       $set: {
@@ -8,7 +8,7 @@ async function createProfile(interaction, userOptions) {
     },
     { upsert: true }
   );
-  console.log(res);
+  return true;
 }
 
 module.exports = { createProfile };

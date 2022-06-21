@@ -6,7 +6,7 @@
  * 9 = Invis
  **/
 
-const { MessageActionRow, MessageButton } = require("discord.js");
+const { MessageActionRow, MessageButton, Modal, TextInputComponent } = require("discord.js");
 
 const emojis = {
   "0down": "<:ASH_DOWN:987629488064036884>",
@@ -26,4 +26,6 @@ const rows = [row1, row2, row3];
 
 const pokemonList = {};
 
-module.exports = { emojis, rows, pokemonList };
+const newSaveModal = new Modal().setCustomId("newSaveModal").setTitle("Save Name").addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Your name for the Save (min 5, max 25)").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
+
+module.exports = { emojis, rows, pokemonList, newSaveModal };

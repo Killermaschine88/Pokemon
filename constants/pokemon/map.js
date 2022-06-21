@@ -1,9 +1,8 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 
 class GameMap {
-  constructor({ existingProgress }) {
-    if (existingProgress) {
-      //
+  constructor({ existingSave = {} }) {
+    if (existingSave?.name) {
     } else {
       const width = 50;
       const height = 50;

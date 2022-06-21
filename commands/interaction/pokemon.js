@@ -32,26 +32,29 @@ module.exports = {
 
       //Profile Selection
       if (["0", "1", "2"].includes(id)) {
-        profileIndex = id
-        await interaction.editReply({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: []});
-        Game = new GameMap(  profiles[id].game );
+        profileIndex = id;
+        await interaction.editReply({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: [] });
+        Game = new GameMap(profiles[id].game);
         embed = new MessageEmbed().setDescription(Game.renderMap());
-        await sleep(2000)
+        await sleep(2000);
         await interaction.editReply({ content: null, embeds: [embed], components: rows });
       } else if (id === "newSave") {
         i.showModal(newSaveModal);
       } else if (id === "newSaveModal") {
-        const name = i.fields.getTextInputValue("name"); //add check if its not only spaces
+        const name = i.fields.getTextInputValue("name");
+        //Bad name check (fix stuff like "aa aaa")
+        if (name.trim() === "" || name.trim().length < 5) return interaction.followUp({ content: "Can't create a Save with an empty name or a name below 5 Characters.", ephemeral: true }), collector.stop();
+
+        //Generate profile
         Game = new GameMap();
         embed = new MessageEmbed().setDescription(Game.renderMap());
         profileIndex = await createProfile(interaction, name, Game);
         await interaction.editReply({ content: null, embeds: [embed], components: rows });
       }
 
-      if (["newSave"].includes(id)) {
-        //
-      } else {
-        await i.deferUpdate().catch(err => err);
+      //Defering
+      if (!["newSave"].includes(id)) {
+        await i.deferUpdate().catch((err) => err);
       }
 
       collector.resetTimer();
@@ -64,7 +67,10 @@ module.exports = {
 
     collector.on("end", async () => {
       await interaction.webhook.editMessage(reply, { components: [] }).catch((err) => err);
-      await saveProfile(interaction, Game, profileIndex)
+
+      if (profileIndex) {
+        await saveProfile(interaction, Game, profileIndex);
+      }
     });
   },
 };

@@ -112,10 +112,10 @@ function generateRandomPokemon() {
 
 function generateSaveSelection(list) {
   //Embed
-  const embed = new MessageEmbed().setTitle("Save Selection");
+  const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
     for (const save of list) {
-      embed.addField(`${save.name}`, `Pokemon: **${save.pokemons.length}**\nMoney: **${save.money}**\n`, true)
+      embed.addField(`${save.name}`, `Pokemon: **${save.pokemons.length}**\nMoney: **${save.money}**\nCreated: ${save.create ? `<t:${save.created}:>` : "Unknown"}`, true);
     }
   } else {
     embed.setDescription("No Saves found, please create a new one.");

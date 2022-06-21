@@ -6,14 +6,14 @@ function getEmoji(name, way = "down") {
   else return emojis[name];
 }
 
-function updateEmbed(interaction, Game, embed) {
+function updateEmbed(interaction, Game, embed, reply) {
   //If Pokemon spawned
   if (Game.pokemonSpawned()) {
   }
 
   //If no pokemon spawned
   embed.setDescription(Game.renderMap());
-  interaction.editReply({ embeds: [embed] });
+  interaction.webhook.editMessage(reply, { embeds: [embed] });
 }
 
 function getOffset(id) {

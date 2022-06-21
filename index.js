@@ -15,6 +15,11 @@ const client = new Discord.Client({
 
 client.login(process.env.DISCORD_TOKEN);
 
+//Mongo DB
+const { connectMongo } = require("./constants/client/mongo");
+const MongoClient = connectMongo();
+client.mongo = MongoClient.db("Pokemon").collection("Profiles");
+
 //Imports
 const fs = require("fs");
 

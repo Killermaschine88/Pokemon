@@ -1,21 +1,25 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 
 class GameMap {
-  constructor() {
-    const width = 50;
-    const height = 50;
-    //let map = Array.from({ length: height }).map(() => []);
+  constructor({ existingProgress }) {
+    if (existingProgress) {
+      //
+    } else {
+      const width = 50;
+      const height = 50;
+      //let map = Array.from({ length: height }).map(() => []);
 
-    const map = generateMap({ width, height });
+      const map = generateMap({ width, height });
 
-    const x = (width / 2).toFixed() - 1;
-    const y = (height / 2).toFixed() - 1;
+      const x = (width / 2).toFixed() - 1;
+      const y = (height / 2).toFixed() - 1;
 
-    map[y][x] = 0; //Player
+      map[y][x] = 0; //Player
 
-    this.map = map;
-    this.pos = { x, y };
-    this.lastMove = "down";
+      this.map = map;
+      this.pos = { x, y };
+      this.lastMove = "down";
+    }
   }
 
   getView(distance) {

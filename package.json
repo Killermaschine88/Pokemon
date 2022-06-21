@@ -13,7 +13,8 @@
   "dependencies": {
     "colorette": "^2.0.19",
     "discord.js": "^13.8.0",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "mongodb": "^4.7.0"
   },
   "prettier": {
     "arrowParens": "always",

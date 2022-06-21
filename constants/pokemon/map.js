@@ -1,12 +1,16 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 
 class GameMap {
-  constructor({ existingSave = {} }) {
-    if (existingSave?.name) {
+  constructor(existingSave) {
+    if (existingSave) {
+      this.map = existingSave.map;
+      this.pos = existingSave.pos;
+      this.lastMove = existingSave.lastMove;
+      this.lastField = existingSave.lastField;
+      this.newField = existingSave.newField;
     } else {
       const width = 50;
       const height = 50;
-      //let map = Array.from({ length: height }).map(() => []);
 
       const map = generateMap({ width, height });
 

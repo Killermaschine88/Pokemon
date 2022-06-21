@@ -26,6 +26,9 @@ const rows = [row1, row2, row3];
 
 const pokemonList = {};
 
-const newSaveModal = new Modal().setCustomId("newSaveModal").setTitle("Save Name").addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Your name for the Save (min 5, max 25)").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
+const newSaveModal = new Modal()
+  .setCustomId("newSaveModal")
+  .setTitle("Save Name")
+  .addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Your name for the Save (min 5, max 25)").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
 
 module.exports = { emojis, rows, pokemonList, newSaveModal };

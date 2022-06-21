@@ -1,9 +1,9 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { rows, newSaveModal } = require("../../constants/pokemon/constants");
-const { updateEmbed, generateProfileSelection } = require("../../constants/pokemon/functions");
-const { MessageEmbed } = require("discord.js");
+const { updateEmbed, generateSaveSelection } = require("../../constants/pokemon/functions");
+const { MessageEmbed, InteractionCollector } = require("discord.js");
 const { sleep } = require("../../constants/util/functions");
-const { createProfile } = require("../../constants/pokemon/mongoFunctions");
+const { createProfile, saveProfile } = require("../../constants/pokemon/mongoFunctions");
 
 module.exports = {
   name: "pokemon",
@@ -13,41 +13,45 @@ module.exports = {
     const profilesFound = await interaction.client.mongo.findOne({ _id: interaction.user.id });
     if (profilesFound) profiles = profilesFound.profiles;
 
-    const reply = await interaction.editReply(generateProfileSelection(profiles));
+    const reply = await interaction.editReply(generateSaveSelection(profiles));
 
-    const collector = reply.createMessageComponentCollector({
-      componentType: "BUTTON",
-      time: 5 * 60 * 1000,
+    const collector = new InteractionCollector(interaction.client, {
+      time: 30000, //5 * 60 * 1000,
+      message: reply,
     });
 
-    createProfile(interaction);
-
     //Once Profile Decided
-    let Game;
+    let profileIndex; // Profile name for creating
+    let Game; // new GameMap()
     let embed; //new MessageEmbed().setDescription(Game.renderMap());
 
     //Collector
     collector.on("collect", async (i) => {
+      if (!i.isButton() && !i.isModalSubmit()) return;
       const id = i.customId;
 
       //Profile Selection
-      if ([0, 1, 2].includes(id)) {
-        await interaction.editReply("Loading Game <a:wait:847471618272002059>");
-        Game = new GameMap({ existingSave: profiles[id] });
+      if (["0", "1", "2"].includes(id)) {
+        profileIndex = id
+        await interaction.editReply({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: []});
+        Game = new GameMap(  profiles[id].game );
         embed = new MessageEmbed().setDescription(Game.renderMap());
+        await sleep(2000)
         await interaction.editReply({ content: null, embeds: [embed], components: rows });
       } else if (id === "newSave") {
-        i.showModal(newSaveModal)
-        const resInteraction = await i.awaitModalSubmit({ time: 60000 }).catch(err => collector.stop());
-        resInteraction.deferUpdate()
-        const name = resInteraction.fields.getTextInputValue("name")
-        console.log(name)
+        i.showModal(newSaveModal);
+      } else if (id === "newSaveModal") {
+        const name = i.fields.getTextInputValue("name"); //add check if its not only spaces
+        Game = new GameMap();
+        embed = new MessageEmbed().setDescription(Game.renderMap());
+        profileIndex = await createProfile(interaction, name, Game);
+        await interaction.editReply({ content: null, embeds: [embed], components: rows });
       }
 
       if (["newSave"].includes(id)) {
         //
       } else {
-        await i.deferUpdate();
+        await i.deferUpdate().catch(err => err);
       }
 
       collector.resetTimer();
@@ -60,6 +64,7 @@ module.exports = {
 
     collector.on("end", async () => {
       await interaction.webhook.editMessage(reply, { components: [] }).catch((err) => err);
+      await saveProfile(interaction, Game, profileIndex)
     });
   },
 };

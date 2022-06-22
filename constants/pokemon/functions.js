@@ -7,14 +7,14 @@ function getEmoji(name, way = "down") {
   else return emojis[name];
 }
 
-function updateEmbed(interaction, Game, embed, reply) {
+function updateEmbed(Game, embed, reply) {
   //If Pokemon spawned
   if (Game.pokemonSpawned()) {
   }
 
   //If no pokemon spawned
   embed.setDescription(Game.renderMap());
-  interaction.webhook.editMessage(reply, { embeds: [embed] });
+  reply.edit(reply, { embeds: [embed] });
 }
 
 function getOffset(id) {
@@ -145,10 +145,13 @@ function getStarterPokemon(id) {
 }
 
 function generateStarterSelection() {
-  const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
-  embed.addField("Turtwig", "Type: Earth", true).addField("Chimchar", "Type: Fire", true).addField("Piplup", "Type: Water", true);
+  const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon").setThumbnail("https://cdn.discordapp.com/attachments/989252216600801311/989252461300682882/hornyProfessor.png");
+  embed
+    .addField(`${getEmoji("TURTWIG")} Turtwig`, "Type: Earth", true)
+    .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "Type: Fire", true)
+    .addField(`${getEmoji("PIPLUP")} Piplup`, "Type: Water", true);
 
-  const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY"), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY"), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY"))];
+  const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG")), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR")), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP")))];
 
   return { embeds: [embed], components: rows };
 }

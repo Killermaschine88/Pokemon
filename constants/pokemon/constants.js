@@ -18,6 +18,11 @@ const emojis = {
   2: "<:GRASS_POKEMON:987635597516611654>",
   3: "<:WATER:987632979834712064>",
   9: "<:air:962820785666416730>",
+
+  //Pokemon
+  PIPLUP: "<:PIPLUP:989251308617871411>",
+  CHIMCHAR: "<:CHIMCHAR:989251336652619776>",
+  TURTWIG: "<:TURTWIG:989251596733014016>",
 };
 
 const row1 = new MessageActionRow().addComponents(new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle("SECONDARY"), new MessageButton().setEmoji("🔼").setCustomId("up").setStyle("SECONDARY"), new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle("SECONDARY"));
@@ -26,9 +31,9 @@ const row3 = new MessageActionRow().addComponents(new MessageButton().setEmoji("
 const rows = [row1, row2, row3];
 
 const pokemonList = {
-  PIPLUP: { name: "Piplup", types: ["Water"] }, // Starter
-  TURTWIG: { name: "TURTWIG", types: ["Grass"] }, // Starter
-  CHIMCHAR: { name: "CHIMCHAR", types: ["Fire"] }, // Starter
+  PIPLUP: { name: "Piplup", emoji: "", types: ["Water"] }, // Starter
+  TURTWIG: { name: "TURTWIG", emoji: "", types: ["Grass"] }, // Starter
+  CHIMCHAR: { name: "CHIMCHAR", emoji: "", types: ["Fire"] }, // Starter
 };
 
 const pokemonNames = ["PIPLUP", "TURTWIG", "CHIMCHAR"];

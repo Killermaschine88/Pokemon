@@ -34,11 +34,11 @@ module.exports = {
       //Profile Selection
       if (["0", "1", "2"].includes(id)) {
         profileIndex = id;
-        await interaction.editReply({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: [] });
+        await reply.edit({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: [] });
         Game = new GameMap(profiles[id].game);
         embed = new MessageEmbed().setDescription(Game.renderMap());
         await sleep(2000);
-        await interaction.editReply({ content: null, embeds: [embed], components: rows });
+        await reply.edit({ content: null, embeds: [embed], components: rows });
       } else if (id === "newSave") {
         i.showModal(newSaveModal);
       } else if (id === "newSaveModal") {
@@ -48,7 +48,7 @@ module.exports = {
         if (name.trim() === "" || name.trim().length < 5) return interaction.followUp({ content: "Can't create a Save with an empty name or a name below 5 Characters.", ephemeral: true }), collector.stop();
 
         //Show new embed with starter pokemons (function like save selection generation)
-        await interaction.editReply(generateStarterSelection());
+        await reply.edit(generateStarterSelection());
       } else if (["starter0", "starter1", "starter2"].includes(id)) {
         // Handles getting starter pokemon
         const starterPokemon = getStarterPokemon(id.replace("starter", ""));
@@ -57,7 +57,7 @@ module.exports = {
         Game = new GameMap();
         embed = new MessageEmbed().setDescription(Game.renderMap());
         profileIndex = await createProfile(interaction, name, Game, starterPokemon);
-        await interaction.editReply({ content: null, embeds: [embed], components: rows });
+        await reply.edit({ content: null, embeds: [embed], components: rows });
       }
 
       //Defering
@@ -69,12 +69,12 @@ module.exports = {
 
       if (["up", "down", "left", "right"].includes(id)) {
         Game.movePlayer(id);
-        updateEmbed(interaction, Game, embed, reply);
+        updateEmbed(Game, embed, reply);
       }
     });
 
     collector.on("end", async () => {
-      await interaction.webhook.editMessage(reply, { components: [] }).catch((err) => err);
+      await reply.edit(reply, { components: [] }).catch((err) => err);
 
       if (profileIndex) {
         await saveProfile(interaction, Game, profileIndex);

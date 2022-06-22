@@ -1,4 +1,5 @@
-const { emojis, pokemonList, pokemonNames } = require("./constants");
+const { emojis } = require("../JSON/emojiList");
+const { pokemonList, pokemonNames } = require("../JSON/pokemonList");
 const { getRandomNumber } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 

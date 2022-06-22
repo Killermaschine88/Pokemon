@@ -34,7 +34,7 @@ module.exports = {
       //Profile Selection
       if (["0", "1", "2"].includes(id)) {
         profileIndex = id;
-        await reply.edit({ content: "Loading Game <a:wait:847471618272002059>", embeds: [], components: [] });
+        await reply.edit({ content: "Loading Game <a:wait:989262887317028924>", embeds: [], components: [] });
         Game = new GameMap(profiles[id].game);
         embed = new MessageEmbed().setDescription(Game.renderMap());
         await sleep(2000);

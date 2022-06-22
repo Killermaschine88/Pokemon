@@ -6,14 +6,4 @@ npm-debug.log*
 # NPM
 node_modules/
 .npm
-
-# Replit
-.replit
-replit.nix
-.cache/replit/nix
-.config
-
-# Other
 .env
-constants/functions/renderLore/
-constants/skyblock/

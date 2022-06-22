@@ -1,4 +1,5 @@
 /**
+ * Theme is Gen 4
  * 0 = Player
  * 1 = Grass (No Pokemon)
  * 2 = Grass (Pokemon)
@@ -24,11 +25,17 @@ const row2 = new MessageActionRow().addComponents(new MessageButton().setEmoji("
 const row3 = new MessageActionRow().addComponents(new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle("SECONDARY"), new MessageButton().setEmoji("🔽").setCustomId("down").setStyle("SECONDARY"), new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle("SECONDARY"));
 const rows = [row1, row2, row3];
 
-const pokemonList = {};
+const pokemonList = {
+  PIPLUP: { name: "Piplup", types: ["Water"] }, // Starter
+  TURTWIG: { name: "TURTWIG", types: ["Grass"] }, // Starter
+  CHIMCHAR: { name: "CHIMCHAR", types: ["Fire"] }, // Starter
+};
+
+const pokemonNames = ["PIPLUP", "TURTWIG", "CHIMCHAR"];
 
 const newSaveModal = new Modal()
   .setCustomId("newSaveModal")
   .setTitle("Save Name")
   .addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Your name for the Save (min 5, max 25)").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
 
-module.exports = { emojis, rows, pokemonList, newSaveModal };
+module.exports = { emojis, rows, pokemonList, newSaveModal, pokemonNames };

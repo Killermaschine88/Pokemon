@@ -1,6 +1,6 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { rows, newSaveModal } = require("../../constants/pokemon/constants");
-const { updateEmbed, generateSaveSelection } = require("../../constants/pokemon/functions");
+const { updateEmbed, generateSaveSelection, getStarterPokemon, generateStarterSelection } = require("../../constants/pokemon/functions");
 const { MessageEmbed, InteractionCollector } = require("discord.js");
 const { sleep } = require("../../constants/util/functions");
 const { createProfile, saveProfile } = require("../../constants/pokemon/mongoFunctions");
@@ -23,7 +23,8 @@ module.exports = {
     //Once Profile Decided
     let profileIndex; // Profile name for creating
     let Game; // new GameMap()
-    let embed; //new MessageEmbed().setDescription(Game.renderMap());
+    let embed; // new MessageEmbed().setDescription(Game.renderMap());
+    let name; // Save name for creating
 
     //Collector
     collector.on("collect", async (i) => {
@@ -41,14 +42,21 @@ module.exports = {
       } else if (id === "newSave") {
         i.showModal(newSaveModal);
       } else if (id === "newSaveModal") {
-        const name = i.fields.getTextInputValue("name");
+        //Handles name input
+        name = i.fields.getTextInputValue("name");
         //Bad name check (fix stuff like "aa aaa")
         if (name.trim() === "" || name.trim().length < 5) return interaction.followUp({ content: "Can't create a Save with an empty name or a name below 5 Characters.", ephemeral: true }), collector.stop();
+
+        //Show new embed with starter pokemons (function like save selection generation)
+        await interaction.editReply(generateStarterSelection());
+      } else if (["starter0", "starter1", "starter2"].includes(id)) {
+        // Handles getting starter pokemon
+        const starterPokemon = getStarterPokemon(id.replace("starter", ""));
 
         //Generate profile
         Game = new GameMap();
         embed = new MessageEmbed().setDescription(Game.renderMap());
-        profileIndex = await createProfile(interaction, name, Game);
+        profileIndex = await createProfile(interaction, name, Game, starterPokemon);
         await interaction.editReply({ content: null, embeds: [embed], components: rows });
       }
 

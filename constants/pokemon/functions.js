@@ -1,4 +1,4 @@
-const { emojis, pokemonList } = require("./constants");
+const { emojis, pokemonList, pokemonNames } = require("./constants");
 const { getRandomNumber } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 
@@ -60,7 +60,7 @@ function generateMap({ width, height }) {
   while (mapGenerating) {
     const randomNum = getRandomNumber(100, false);
 
-    if (randomNum <= 3) {
+    if (randomNum <= 1.5) {
       //Grass Chance
       const [fieldWidth, fieldHeight] = getFieldSize();
 
@@ -107,7 +107,8 @@ function pokemonFound() {
 }
 
 function generateRandomPokemon() {
-  //Get list with like 10 pokemon for the time being
+  const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
+  return pokemonList[pokemon];
 }
 
 function generateSaveSelection(list) {
@@ -137,4 +138,19 @@ function generateSaveSelection(list) {
   return { embeds: [embed], components: [row] };
 }
 
-module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateSaveSelection };
+function getStarterPokemon(id) {
+  const starters = ["TURTWIG", "CHIMCHAR", "PIPLUP"];
+
+  return pokemonList[starters[id]];
+}
+
+function generateStarterSelection() {
+  const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
+  embed.addField("Turtwig", "Type: Earth", true).addField("Chimchar", "Type: Fire", true).addField("Piplup", "Type: Water", true);
+
+  const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY"), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY"), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY"))];
+
+  return { embeds: [embed], components: rows };
+}
+
+module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateSaveSelection, getStarterPokemon, generateStarterSelection };

@@ -116,7 +116,7 @@ function generateSaveSelection(list) {
   const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
     for (const save of list) {
-      embed.addField(`${save.name}`, `Pokemon: **${save.pokemons.length}**\nMoney: **${save.money}**\nCreated: ${save.create ? `<t:${save.created}:>` : "Unknown"}`, true);
+      embed.addField(`${save.name}`, `Pokemon: **${save.pokemons.length}**\nPokemon Dollars: **${save.pokemon_dollars}**\nCreated: ${save.created ? `<t:${save.created}>` : "Unknown"}`, true);
     }
   } else {
     embed.setDescription("No Saves found, please create a new one.");
@@ -145,7 +145,7 @@ function getStarterPokemon(id) {
 }
 
 function generateStarterSelection() {
-  const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon").setThumbnail("https://cdn.discordapp.com/attachments/989252216600801311/989252461300682882/hornyProfessor.png");
+  const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
     .addField(`${getEmoji("TURTWIG")} Turtwig`, "Type: Earth", true)
     .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "Type: Fire", true)

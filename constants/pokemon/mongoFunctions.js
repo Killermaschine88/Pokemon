@@ -9,10 +9,10 @@ async function createProfile(interaction, name, Game, starterPokemon) {
           created: Math.floor(Date.now() / 1000),
           starterPokemon: starterPokemon.name,
           game: Game,
-          money: 0,
+          pokemon_dollars: 0,
           team: [starterPokemon],
           items: [],
-          pokemons: [starterPokemon],
+          //pokemons: [starterPokemon], // Figure out better way to handle for pc
         },
       },
     },

@@ -18,7 +18,7 @@ module.exports = {
 
         //Return result
         await message.channel.send(`Created <:${emoji.name}:${emoji.id}>, \`<:${emoji.name}:${emoji.id}>\``);
-        client.channels.cache.get("989152766062649394").send(`<:${emoji.name}:${emoji.id}> \`"${emoji.name}": "<:${emoji.name}:${emoji.id}>",\``);
+        client.channels.cache.get("989152766062649394").send(`<:${emoji.name}:${emoji.id}> \`${emoji.name}: "<:${emoji.name}:${emoji.id}>",\``);
       } catch (err) {
         await message.channel.send(`Something went wrong while uploading <${split[0]}> with name \`${split[1]}\``);
         console.log(err);

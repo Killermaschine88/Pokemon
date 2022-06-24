@@ -6,11 +6,6 @@ globalStart();
 const Discord = require("discord.js");
 const client = new Discord.Client({
   intents: ["GUILDS", "GUILD_MESSAGES"],
-  ws: {
-    properties: {
-      $browser: "Discord Android",
-    },
-  },
 });
 
 client.login(process.env.DISCORD_TOKEN);

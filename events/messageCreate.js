@@ -53,20 +53,29 @@ module.exports = {
 };
 
 async function uploadEmoji(split, client) {
+  //Misc
+  let url = split[0];
+  let name = split[1];
+
+  //Cuz im lame
+  if (isNaN(url) && url.length < 30) {
+    name = url;
+  }
   //Getting Random guild
   const guild = client.guilds.cache.get(guilds[Math.floor(Math.random() * guilds.length)]);
 
   //Getting Image Link
-  const pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${split[0]}`)).data;
+  let pokemon;
+  if (url.length < 30) pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${url}`)).data.sprites.front_default;
 
   // Fetch url and create buffer
-  const buffer = await axios.get(pokemon.sprites.front_default, { responseType: "arraybuffer" });
+  const buffer = await axios.get(pokemon, { responseType: "arraybuffer" });
 
   //Resize image
   const file = await sharp(buffer.data).trim(10).toBuffer({ resolveWithObject: true });
 
   //Upload emoji to discord
-  const emoji = await guild.emojis.create(file.data, split[1].toUpperCase());
+  const emoji = await guild.emojis.create(file.data, name.toUpperCase());
 
   return emoji;
 }

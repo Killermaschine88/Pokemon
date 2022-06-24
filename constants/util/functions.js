@@ -9,4 +9,14 @@ const sleep = async (ms) => {
   });
 };
 
-module.exports = { getRandomNumber, sleep };
+function badName(name) {
+  const split = name.trim().split("")
+  let str = ""
+  for(const letter of split) {
+    if(letter.trim() !== "") str += letter.trim()
+  }
+  
+  return str.length <= 5
+}
+
+module.exports = { getRandomNumber, sleep, badName };

@@ -1,5 +1,5 @@
 async function createProfile(interaction, name, Game, starterPokemon) {
-  if (await hasProfileWithName(interaction, name)) return interaction.followUp({ content: `Can't create another Save with the name ${name} as a save with that name already exists.`, ephemeral: true });
+  if (await hasProfileWithName(interaction, name)) return interaction.followUp({ content: `Can't create another Profile with the name ${name} as a profile with that name already exists.`, ephemeral: true });
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {
@@ -8,7 +8,7 @@ async function createProfile(interaction, name, Game, starterPokemon) {
           name: name,
           created: Math.floor(Date.now() / 1000),
           starterPokemon: starterPokemon.name,
-          game: Game,
+          game: Game.getProfile(),
           pokemon_dollars: 0,
           team: [starterPokemon],
           items: [],
@@ -30,9 +30,9 @@ async function hasProfileWithName(interaction, name) {
   return account.profiles.every((profile) => profile.name === name);
 }
 
-async function saveProfile(interaction, Game, profileIndex) {
+async function saveProfile(interaction, Game) {
   let profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
-  profiles[profileIndex].game = Game;
+  profiles[Game.getProfileIndex()].game = Game.getProfile();
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {

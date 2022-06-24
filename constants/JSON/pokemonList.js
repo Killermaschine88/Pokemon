@@ -1,7 +1,7 @@
 const pokemonList = {
-  PIPLUP: { name: "Piplup", emoji: "", types: ["Water"], xp: 0 }, // Starter
-  TURTWIG: { name: "TURTWIG", emoji: "", types: ["Grass"], xp: 0 }, // Starter
-  CHIMCHAR: { name: "CHIMCHAR", emoji: "", types: ["Fire"], xp: 0 }, // Starter
+  PIPLUP: { name: "Piplup", id: "PIPLUP", types: ["Water"], xp: 0, moves: [] }, // Starter
+  TURTWIG: { name: "Turtwig", id: "TURTWIG", types: ["Grass"], xp: 0, moves: [] }, // Starter
+  CHIMCHAR: { name: "Chimchar", id: "CHIMCHAR", types: ["Fire"], xp: 0, moves: [] }, // Starter
 };
 
 const pokemonNames = ["PIPLUP", "TURTWIG", "CHIMCHAR"];

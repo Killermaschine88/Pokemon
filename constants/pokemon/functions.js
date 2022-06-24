@@ -1,22 +1,23 @@
 const { emojis } = require("../JSON/emojiList");
 const { pokemonList, pokemonNames } = require("../JSON/pokemonList");
+const { rows } = require("./constants");
 const { getRandomNumber } = require("../util/functions");
-const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
+const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 
 function getEmoji(name, way = "down") {
   if (name === 0) return emojis[name + way];
   else return emojis[name];
 }
 
-function updateEmbed(Game, embed, reply) {
+/*function updateEmbed(Game) {
   //If Pokemon spawned
   if (Game.pokemonSpawned()) {
   }
 
   //If no pokemon spawned
   embed.setDescription(Game.renderMap());
-  reply.edit(reply, { embeds: [embed] });
-}
+  reply.edit({ embeds: [embed], components: rows });
+}*/
 
 function getOffset(id) {
   if (id === "up") return [0, -1]; //x, y
@@ -40,7 +41,7 @@ function handleMovement(game, x, y) {
 }
 
 function canMove(game, x, y) {
-  const move = game.map[game.pos.y + y][game.pos.x + x];
+  const move = game.map?.[game.pos.y + y]?.[game.pos.x + x];
 
   return ![undefined].includes(move);
 }
@@ -112,28 +113,28 @@ function generateRandomPokemon() {
   return pokemonList[pokemon];
 }
 
-function generateSaveSelection(list) {
+function generateProfileSelection(list) {
   //Embed
   const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
-    for (const save of list) {
-      embed.addField(`${save.name}`, `Pokemon: **${save.pokemons.length}**\nPokemon Dollars: **${save.pokemon_dollars}**\nCreated: ${save.created ? `<t:${save.created}>` : "Unknown"}`, true);
+    for (const profile of list) {
+      embed.addField(`${profile.name}`, `Pokemon: **0**\nPokemon Dollars: **${profile.pokemon_dollars}**\nCreated: ${profile.created ? `<t:${profile.created}>` : "Unknown"}`, true);
     }
   } else {
-    embed.setDescription("No Saves found, please create a new one.");
+    embed.setDescription("No Profiles found, please create a new one.");
   }
 
   //Components
   const row = new MessageActionRow();
   if (list.length > 0) {
     let index = 0;
-    for (const save of list) {
-      row.components.push(new MessageButton().setCustomId(`${index}`).setLabel(`Load: ${save.name}`).setStyle("SECONDARY"));
+    for (const profile of list) {
+      row.components.push(new MessageButton().setCustomId(`${index}`).setLabel(`Load: ${profile.name}`).setStyle("SECONDARY"));
       index++;
     }
-    if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newSave").setLabel("Create new Save").setStyle("SECONDARY"));
+    if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profile").setStyle("SECONDARY"));
   } else {
-    row.components.push(new MessageButton().setCustomId("newSave").setLabel("Create new Save").setStyle("SECONDARY"));
+    row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profle").setStyle("SECONDARY"));
   }
 
   return { embeds: [embed], components: [row] };
@@ -148,13 +149,30 @@ function getStarterPokemon(id) {
 function generateStarterSelection() {
   const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
-    .addField(`${getEmoji("TURTWIG")} Turtwig`, "Type: Earth", true)
-    .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "Type: Fire", true)
-    .addField(`${getEmoji("PIPLUP")} Piplup`, "Type: Water", true);
+    .addField(`${getEmoji("TURTWIG")} Turtwig`, "**Type:** Grass", true)
+    .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "**Type:** Fire", true)
+    .addField(`${getEmoji("PIPLUP")} Piplup`, "**Type:** Water", true);
 
   const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG")), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR")), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP")))];
 
   return { embeds: [embed], components: rows };
 }
 
-module.exports = { getEmoji, updateEmbed, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateSaveSelection, getStarterPokemon, generateStarterSelection };
+function generateMenu() {
+  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Empty").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
+  const options = [
+    { label: "Back to Game", emoji: "977989090714714183", value: "movement" },
+    { label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
+    { label: "Pokemon", emoji: "989792754169167903", value: "pokemon" },
+    { label: "Bag", emoji: "989794285002047518", value: "bag" },
+    { label: "Save", emoji: "989807222051721216", value: "save" },
+  ];
+
+  for (const option of options) {
+    rows[0].components[0].options.push({ label: option.label, value: option.value, emoji: { id: option.emoji } });
+  }
+
+  return { components: rows };
+}
+
+module.exports = { generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

@@ -1,4 +1,6 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
+const { MessageEmbed } = require("discord.js");
+const { rows } = require("./constants");
 
 class GameMap {
   constructor(existingSave) {
@@ -8,6 +10,7 @@ class GameMap {
       this.lastMove = existingSave.lastMove;
       this.lastField = existingSave.lastField;
       this.newField = existingSave.newField;
+      this.embed = new MessageEmbed(this.embed);
     } else {
       const width = 50;
       const height = 50;
@@ -22,6 +25,7 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
+      this.embed = new MessageEmbed().setDescription(this.renderMap());
     }
   }
 
@@ -63,6 +67,18 @@ class GameMap {
     this.newField = returnValue.newField;
   }
 
+  updateEmbed() {
+    return this.embed.setDescription(this.renderMap());
+  }
+
+  setMessage(message) {
+    this.message = message;
+  }
+
+  async updateMessage() {
+    await this.message.edit({ content: null, embeds: [this.updateEmbed()], components: rows });
+  }
+
   pokemonSpawned() {
     if (this.newField === 2) {
       if (pokemonFound()) {
@@ -70,6 +86,43 @@ class GameMap {
       }
     }
   }
+
+  // Setters
+  setProfileIndex(index) {
+    this.index = index;
+  }
+
+  setMessage(message) {
+    this.message = message;
+  }
+
+  setStarted() {
+    this.started = true;
+  }
+
+  // Getters
+  getProfileIndex() {
+    return this.index;
+  }
+
+  getMessage() {
+    return this.message;
+  }
+
+  isStarted() {
+    return this.started || false;
+  }
+
+  getProfile() {
+    let obj = {};
+    for (const [key, value] of Object.entries(this)) {
+      if (["message", "started"].includes(key)) continue;
+      obj[key] = value;
+    }
+    return obj;
+  }
+
+  // Unused atm
 }
 
 module.exports = { GameMap };

@@ -1,5 +1,8 @@
 const sharp = require("sharp");
 const axios = require("axios");
+const { returnTypes, returnStats, returnMoves } = require("../constants/util/apiFunctions");
+const fs = require("fs");
+const { titleCase } = require("../constants/util/functions");
 
 const guilds = ["944141746483372143"];
 
@@ -23,6 +26,12 @@ module.exports = {
         await message.channel.send(`Something went wrong while uploading <${split[0]}> with name \`${split[1]}\``);
         console.log(err);
       }
+    }
+
+    if (message.channel.id === "989956855419772928") {
+      await message.delete();
+      const res = await generatePokemonEntry(message.content);
+      await message.channel.send(`Added information for ${message.content}`);
     }
 
     if (!message.content.startsWith(process.env.PREFIX || ".")) return;
@@ -81,4 +90,21 @@ async function uploadEmoji(split, client) {
   const emoji = await guild.emojis.create(file.data, name.toUpperCase());
 
   return emoji;
+}
+
+async function generatePokemonEntry(name) {
+  let obj = {};
+  let list = JSON.parse(fs.readFileSync(__dirname + "/../constants/JSON/pokemonList.json"));
+  const pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)).data;
+  obj["name"] = titleCase(name);
+  obj["id"] = name.toUpperCase();
+  obj["pokemonId"] = pokemon.id;
+  obj["xp"] = 0;
+  obj["types"] = returnTypes(pokemon.types);
+  obj["stats"] = returnStats(pokemon.stats);
+  obj["moves"] = returnMoves(pokemon.moves);
+
+  list[name.toUpperCase()] = obj;
+
+  fs.writeFileSync(__dirname + "/../constants/JSON/pokemonList.json", JSON.stringify(list));
 }

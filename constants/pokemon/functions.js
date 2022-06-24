@@ -104,7 +104,9 @@ function pokemonFound() {
 }
 
 function generateRandomPokemon() {
-  const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
+  // !!! FIX ME
+  let pokemonNames = [];
+  const pokemon = [pokemonNames][Math.floor(Math.random() * pokemonNames.length)];
   return pokemonList[pokemon];
 }
 
@@ -163,7 +165,7 @@ function generateMenu() {
     { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemon" },
     { label: "Bag", emoji: "989794285002047518", value: "bag" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
-    { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" }
+    { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" },
   ];
 
   for (const option of options) {

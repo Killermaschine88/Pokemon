@@ -19,4 +19,10 @@ function badName(name) {
   return str.length < 5;
 }
 
-module.exports = { getRandomNumber, sleep, badName };
+function titleCase(str) {
+  return str.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
+module.exports = { getRandomNumber, sleep, badName, titleCase };

@@ -5,7 +5,7 @@ const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile } = require("../../constants/pokemon/mongoFunctions");
 const { menuHandler } = require("../../constants/pokemon/handlers");
 const { badName } = require("../../constants/util/functions");
-const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions")
+const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions");
 
 module.exports = {
   name: "pokemon",
@@ -36,15 +36,15 @@ module.exports = {
         //Handles Loading Profile
         await reply.edit({ content: "Loading Game <a:wait:989262887317028924>", embeds: [], components: [] });
         Game = new GameMap(profiles[id]);
-        Game.setStarted().setProfileIndex(id).setVariables(interaction).setMessage(reply).updateMessage();
+        Game.setStarted().setProfileIndex(id).setVariables(interaction, collector).setMessage(reply).updateMessage();
       } else if (id === "newProfile") {
         //Profile Generation Modal
         i.showModal(newProfileModal);
       } else if (id === "newProfileModal") {
         //Handles name input
         name = i.fields.getTextInputValue("name").trim();
-        if (badName(name)) return i.deferUpdate().catch(err => err), collector.stop("Name input was invalid");
-        if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch(err => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });
+        if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
+        if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });
 
         //Show new embed with starter pokemons (function like save selection generation)
         await reply.edit(generateStarterSelection());
@@ -53,7 +53,7 @@ module.exports = {
 
         //Generate profile and update message
         Game = new GameMap();
-        await createProfile(interaction, name, Game, starterPokemon)
+        await createProfile(interaction, name, Game, starterPokemon);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
         await interaction.editReply(generateProfileSelection(profiles));
       }
@@ -66,7 +66,7 @@ module.exports = {
       collector.resetTimer(); //Reset timer on input
 
       //Menu Handler
-      if (["menu", "pokedex", "pokemon", "bag", "save", "movement"].includes(id)) {
+      if (["menu", "pokedex", "pokemon", "bag", "save", "movement", "exitAndSave"].includes(id)) {
         await menuHandler(i, Game);
       }
 

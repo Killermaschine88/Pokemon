@@ -6,7 +6,7 @@ const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = req
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {
-    if(name === 0) return emojis[name + way];
+    if (name === 0) return emojis[name + way];
     else return emojis[name];
   }
 
@@ -142,12 +142,14 @@ function getStarterPokemon(id) {
 }
 
 function generateStarterSelection() {
+  //Embed
   const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
     .addField(`${getEmoji("TURTWIG")} Turtwig`, "**Type:** Grass", true)
     .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "**Type:** Fire", true)
     .addField(`${getEmoji("PIPLUP")} Piplup`, "**Type:** Water", true);
 
+  //Rows
   const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG")), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR")), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP")))];
 
   return { embeds: [embed], components: rows };
@@ -158,9 +160,10 @@ function generateMenu() {
   const options = [
     { label: "Back to Game", emoji: "977989090714714183", value: "movement" },
     { label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
-    { label: "Pokemon", emoji: "989792754169167903", value: "pokemon" },
+    { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemon" },
     { label: "Bag", emoji: "989794285002047518", value: "bag" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
+    { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" }
   ];
 
   for (const option of options) {

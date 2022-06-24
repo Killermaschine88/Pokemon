@@ -1,19 +1,20 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
-const { getCurrentProfile } = require("./mongoFunctions")
+const { getCurrentProfile } = require("./mongoFunctions");
 
 class GameMap {
   constructor(existingSave) {
     if (existingSave) {
-      this.name = existingSave.name
-      this.created = existingSave.created
-      this.team = existingSave.team
-      this.bag = existingSave.bag
-      this.badges = existingSave.badges
-      this.pokedex = existingSave.pokedex
-      this.storage = existingSave.storage
-      this.starterPokemon = existingSave.starterPokemon
+      this.name = existingSave.name;
+      this.created = existingSave.created;
+      this.team = existingSave.team;
+      this.bag = existingSave.bag;
+      this.badges = existingSave.badges;
+      this.pokedex = existingSave.pokedex;
+      this.storage = existingSave.storage;
+      this.starterPokemon = existingSave.starterPokemon;
+      this.pokemonDollars = existingSave.pokemonDollars;
       this.map = existingSave.game.map;
       this.pos = existingSave.game.pos;
       this.lastMove = existingSave.game.lastMove;
@@ -98,24 +99,25 @@ class GameMap {
   // Setters
   setProfileIndex(index) {
     this.profileIndex = index;
-    return this
+    return this;
   }
 
-  setVariables(interaction) {
+  setVariables(interaction, collector) {
     this.client = interaction.client;
     this.user = interaction.user;
     this.profile = getCurrentProfile(this.client, this.user, this.profileIndex);
-    return this
+    this.collector = collector;
+    return this;
   }
 
   setMessage(message) {
     this.message = message;
-    return this
+    return this;
   }
 
   setStarted() {
     this.started = true;
-    return this
+    return this;
   }
 
   // Getters
@@ -136,7 +138,7 @@ class GameMap {
   }
 
   getData(data) {
-    return this[data]
+    return this[data];
   }
 
   getProfileForSave() {
@@ -145,13 +147,14 @@ class GameMap {
       if (["name", "created", "starterPokemon", "pokemonDollars", "team", "bag", "badges", "pokedex", "storage"].includes(key)) obj[key] = value;
     }
 
-    obj["game"] = { // Map itself
+    obj["game"] = {
+      // Map itself
       map: this.map,
       pos: this.pos,
       lastMove: this.lastMove,
       lastField: this.lastField || 1,
-      newField: this.newField || 1
-    }
+      newField: this.newField || 1,
+    };
     return obj;
   }
 

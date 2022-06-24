@@ -3,7 +3,8 @@ async function createProfile(interaction, name, Game, starterPokemon) {
     { _id: interaction.user.id },
     {
       $push: {
-        profiles: { // If adding anything here dont forget to add at constants/map.js getProfileForSave() Function
+        profiles: {
+          // If adding anything here dont forget to add at constants/map.js getProfileForSave() Function
           game: Game, // Map Data
           name: name, // Name of the profile
           created: Math.floor(Date.now() / 1000), // Creation Date
@@ -45,8 +46,8 @@ async function saveProfile(interaction, Game) {
 }
 
 async function getCurrentProfile(client, user, profileIndex) {
-  const player = await client.mongo.findOne({ _id: user.id })
-  return player.profiles[profileIndex]
+  const player = await client.mongo.findOne({ _id: user.id });
+  return player.profiles[profileIndex];
 }
 
 module.exports = { createProfile, saveProfile, getCurrentProfile, hasProfileWithName };

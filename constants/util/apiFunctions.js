@@ -17,7 +17,8 @@ function returnStats(statList) {
   return pokemonStats;
 }
 
-function returnMoves(moveList) { // Move Information: https://pokeapi.co/api/v2/move/moveName
+function returnMoves(moveList) {
+  // Move Information: https://pokeapi.co/api/v2/move/moveName
   let pokemonMoves = [];
 
   const filteredList = moveList.filter((move) => move.version_group_details[0].version_group.name === "diamond-pearl");

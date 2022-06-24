@@ -4,20 +4,15 @@ const { rows } = require("./constants");
 const { getRandomNumber } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 
-function getEmoji(name, way = "down") {
-  if (name === 0) return emojis[name + way];
-  else return emojis[name];
-}
-
-/*function updateEmbed(Game) {
-  //If Pokemon spawned
-  if (Game.pokemonSpawned()) {
+function getEmoji(name, shiny = false, way = "down") {
+  if (!isNaN(name)) {
+    if(name === 0) return emojis[name + way];
+    else return emojis[name];
   }
 
-  //If no pokemon spawned
-  embed.setDescription(Game.renderMap());
-  reply.edit({ embeds: [embed], components: rows });
-}*/
+  if (shiny) return emojis[name.toUpperCase()].shiny;
+  else return emojis[name.toUpperCase()].normal;
+}
 
 function getOffset(id) {
   if (id === "up") return [0, -1]; //x, y
@@ -118,7 +113,7 @@ function generateProfileSelection(list) {
   const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
     for (const profile of list) {
-      embed.addField(`${profile.name}`, `Pokemon: **0**\nPokemon Dollars: **${profile.pokemon_dollars}**\nCreated: ${profile.created ? `<t:${profile.created}>` : "Unknown"}`, true);
+      embed.addField(`${profile.name}`, `Starter: ${profile.starterPokemon} ${getEmoji(profile.starterPokemon)}\nPokemon Dollars: **${profile.pokemonDollars}**\nCreated: ${profile.created ? `<t:${profile.created}>` : "Unknown"}`, true);
     }
   } else {
     embed.setDescription("No Profiles found, please create a new one.");

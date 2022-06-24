@@ -1,18 +1,19 @@
 async function createProfile(interaction, name, Game, starterPokemon) {
-  if (await hasProfileWithName(interaction, name)) return interaction.followUp({ content: `Can't create another Profile with the name ${name} as a profile with that name already exists.`, ephemeral: true });
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {
       $push: {
-        profiles: {
-          name: name,
-          created: Math.floor(Date.now() / 1000),
-          starterPokemon: starterPokemon.name,
-          game: Game.getProfile(),
-          pokemon_dollars: 0,
-          team: [starterPokemon],
-          items: [],
-          //pokemons: [starterPokemon], // Figure out better way to handle for pc
+        profiles: { // If adding anything here dont forget to add at constants/map.js getProfileForSave() Function
+          game: Game, // Map Data
+          name: name, // Name of the profile
+          created: Math.floor(Date.now() / 1000), // Creation Date
+          starterPokemon: starterPokemon.name, // Name of the starter Pokemon
+          pokemonDollars: 0, // Amount of Money
+          team: [starterPokemon], // Currently selected team
+          bag: [], // Bag of Items (Pokeballs, etc)
+          badges: [], // Gym Badges
+          pokedex: [], // List of found Pokemon
+          storage: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 19: [], 20: [], 21: [], 22: [], 23: [], 24: [], 25: [] }, // Storage for exces pokemon
         },
       },
     },
@@ -31,8 +32,8 @@ async function hasProfileWithName(interaction, name) {
 }
 
 async function saveProfile(interaction, Game) {
-  let profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
-  profiles[Game.getProfileIndex()].game = Game.getProfile();
+  let profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id }))?.profiles || [];
+  profiles[Game.getProfileIndex()] = Game.getProfileForSave();
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {
@@ -43,4 +44,9 @@ async function saveProfile(interaction, Game) {
   );
 }
 
-module.exports = { createProfile, saveProfile };
+async function getCurrentProfile(client, user, profileIndex) {
+  const player = await client.mongo.findOne({ _id: user.id })
+  return player.profiles[profileIndex]
+}
+
+module.exports = { createProfile, saveProfile, getCurrentProfile, hasProfileWithName };

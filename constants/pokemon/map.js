@@ -1,16 +1,25 @@
 const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
+const { getCurrentProfile } = require("./mongoFunctions")
 
 class GameMap {
   constructor(existingSave) {
     if (existingSave) {
-      this.map = existingSave.map;
-      this.pos = existingSave.pos;
-      this.lastMove = existingSave.lastMove;
-      this.lastField = existingSave.lastField;
-      this.newField = existingSave.newField;
-      this.embed = new MessageEmbed(this.embed);
+      this.name = existingSave.name
+      this.created = existingSave.created
+      this.team = existingSave.team
+      this.bag = existingSave.bag
+      this.badges = existingSave.badges
+      this.pokedex = existingSave.pokedex
+      this.storage = existingSave.storage
+      this.starterPokemon = existingSave.starterPokemon
+      this.map = existingSave.game.map;
+      this.pos = existingSave.game.pos;
+      this.lastMove = existingSave.game.lastMove;
+      this.lastField = existingSave.game.lastField;
+      this.newField = existingSave.game.newField;
+      this.embed = new MessageEmbed().setDescription(this.renderMap());
     } else {
       const width = 50;
       const height = 50;
@@ -25,7 +34,6 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
-      this.embed = new MessageEmbed().setDescription(this.renderMap());
     }
   }
 
@@ -50,7 +58,7 @@ class GameMap {
     let map = this.getView(distance);
     for (const row of map) {
       for (const index of row) {
-        str += getEmoji(index, this.lastMove);
+        str += getEmoji(index, false, this.lastMove);
       }
       str += "\n";
     }
@@ -89,20 +97,34 @@ class GameMap {
 
   // Setters
   setProfileIndex(index) {
-    this.index = index;
+    this.profileIndex = index;
+    return this
+  }
+
+  setVariables(interaction) {
+    this.client = interaction.client;
+    this.user = interaction.user;
+    this.profile = getCurrentProfile(this.client, this.user, this.profileIndex);
+    return this
   }
 
   setMessage(message) {
     this.message = message;
+    return this
   }
 
   setStarted() {
     this.started = true;
+    return this
   }
 
   // Getters
   getProfileIndex() {
-    return this.index;
+    return this.profileIndex;
+  }
+
+  getProfile() {
+    return this.profile;
   }
 
   getMessage() {
@@ -113,11 +135,22 @@ class GameMap {
     return this.started || false;
   }
 
-  getProfile() {
+  getData(data) {
+    return this[data]
+  }
+
+  getProfileForSave() {
     let obj = {};
     for (const [key, value] of Object.entries(this)) {
-      if (["message", "started"].includes(key)) continue;
-      obj[key] = value;
+      if (["name", "created", "starterPokemon", "pokemonDollars", "team", "bag", "badges", "pokedex", "storage"].includes(key)) obj[key] = value;
+    }
+
+    obj["game"] = { // Map itself
+      map: this.map,
+      pos: this.pos,
+      lastMove: this.lastMove,
+      lastField: this.lastField || 1,
+      newField: this.newField || 1
     }
     return obj;
   }

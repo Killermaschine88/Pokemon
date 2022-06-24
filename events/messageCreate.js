@@ -55,18 +55,21 @@ module.exports = {
 async function uploadEmoji(split, client) {
   //Misc
   let url = split[0];
-  let name = split[1];
+  let name = split[0];
+  let isShiny = split[1];
 
   //Cuz im lame
-  if (isNaN(url) && url.length < 30) {
-    name = url;
-  }
+  if (isShiny) name += "_SHINY";
+  else name += "_NORMAL";
+
   //Getting Random guild
   const guild = client.guilds.cache.get(guilds[Math.floor(Math.random() * guilds.length)]);
 
   //Getting Image Link
-  let pokemon;
-  if (url.length < 30) pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${url}`)).data.sprites.front_default;
+  let pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${url}`)).data;
+
+  if (isShiny) pokemon = pokemon.sprites.front_shiny;
+  else pokemon = pokemon.sprites.front_default;
 
   // Fetch url and create buffer
   const buffer = await axios.get(pokemon, { responseType: "arraybuffer" });

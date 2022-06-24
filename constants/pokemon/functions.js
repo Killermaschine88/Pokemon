@@ -1,6 +1,5 @@
 const { emojis } = require("../JSON/emojiList");
-const { pokemonList, pokemonNames } = require("../JSON/pokemonList");
-const { rows } = require("./constants");
+const pokemonList = require("../JSON/pokemonList");
 const { getRandomNumber } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 
@@ -104,8 +103,8 @@ function pokemonFound() {
 }
 
 function generateRandomPokemon() {
-  // !!! FIX ME
-  let pokemonNames = [];
+  // !!! FIX ME (should probably be fixed)
+  let pokemonNames = pokemonList.map(pokemon => pokemon.id)
   const pokemon = [pokemonNames][Math.floor(Math.random() * pokemonNames.length)];
   return pokemonList[pokemon];
 }

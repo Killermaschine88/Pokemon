@@ -102,7 +102,7 @@ async function generatePokemonEntry(name) {
   obj["xp"] = 0;
   obj["types"] = returnTypes(pokemon.types);
   obj["stats"] = returnStats(pokemon.stats);
-  obj["moves"] = returnMoves(pokemon.moves);
+  obj["moves"] = await returnMoves(pokemon.moves);
 
   list[name.toUpperCase()] = obj;
 

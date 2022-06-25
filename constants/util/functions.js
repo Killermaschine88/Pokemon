@@ -26,7 +26,7 @@ function titleCase(str) {
 }
 
 function emojiStringToId(emoji) {
-  return emoji.split(":")[2].replace(">", "")
+  return emoji.split(":")[2].replace(">", "");
 }
 
-module.exports = { getRandomNumber, sleep, badName, titleCase, emojiStringToId };;
+module.exports = { getRandomNumber, sleep, badName, titleCase, emojiStringToId };

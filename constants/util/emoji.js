@@ -50,6 +50,8 @@ async function generatePokemonEntry(name) {
   obj["id"] = name.toUpperCase();
   obj["pokemonId"] = pokemon.id;
   obj["xp"] = 0;
+  obj["heldItem"] = null;
+  obj["isShiny"] = false;
   obj["types"] = returnTypes(pokemon.types);
   obj["stats"] = returnStats(pokemon.stats);
   obj["moves"] = await returnMoves(pokemon.moves);

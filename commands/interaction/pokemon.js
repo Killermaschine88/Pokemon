@@ -37,11 +37,15 @@ module.exports = {
         await reply.edit({ content: "Loading Game <a:wait:989262887317028924>", embeds: [], components: [] });
         Game = new GameMap(profiles[id]);
         Game.setStarted().setProfileIndex(id).setVariables(interaction, collector).setMessage(reply).updateMessage();
-      } else if (id === "newProfile") {
-        //Profile Generation Modal
+      }
+
+      //Profile Generation Modal
+      if (id === "newProfile") {
         i.showModal(newProfileModal);
-      } else if (id === "newProfileModal") {
-        //Handles name input
+      }
+
+      //Handles name input
+      if (id === "newProfileModal") {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
@@ -49,23 +53,32 @@ module.exports = {
 
         //Show new embed with starter pokemons (function like save selection generation)
         await reply.edit(generateStarterSelection());
-      } else if (["starter0", "starter1", "starter2"].includes(id)) {
+      }
+
+      //Generate profile and update message
+      if (["starter0", "starter1", "starter2"].includes(id)) {
         const starterPokemon = getStarterPokemon(id.replace("starter", ""));
 
-        //Generate profile and update message
         Game = new GameMap();
         await createProfile(interaction, name, Game, starterPokemon);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
         await interaction.editReply(generateProfileSelection(profiles));
-      } else if (id === "movement") {
-        // Returning components back to walking row
-        Game.updateMessage();
       }
 
       //Defering
       await i.deferUpdate().catch((err) => err);
 
       collector.resetTimer(); //Reset timer on input
+
+      // Returning components back to walking row
+      if (id === "movement") {
+        Game.updateMessage();
+      }
+
+      //Pokemon Menu handler
+      if (id.startsWith("pokemonTeam_")) {
+        Game.getPokemonTeamInfo(i, id.replace("pokemonTeam_", "")); // Display info for selected pokemon in team
+      }
 
       //Menu Handler
       if (["menu", "pokedex", "pokemonTeam", "bag", "save", "exitAndSave", "backToMenu"].includes(id)) {

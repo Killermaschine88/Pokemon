@@ -1,6 +1,7 @@
 let emojis = require("../JSON/emojiList");
 const pokemonList = require("../JSON/pokemonList");
-const { getRandomNumber, emojiStringToId } = require("../util/functions");
+const { xpList } = require("../JSON/xpList")
+const { getRandomNumber, emojiStringToId, titleCase } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 const { uploadEmoji } = require("../../constants/util/emoji");
 const { client } = require("../../index");
@@ -190,13 +191,47 @@ function generateMenu() {
 function getPokemonTeamRow(team) {
   const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select a Pokemon to View").setMinValues(1).setMaxValues(1).setCustomId("pokemonTeamSelect"))];
 
-  rows[0].components[0].options.push({ label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" }})
+  rows[0].components[0].options.push({ label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" } });
 
-  for(let i = 0; i < team.length; i++) {
-    rows[0].components[0].options.push({ label: team[i].name, value: `pokemon_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id )) }})
+  for (let i = 0; i < team.length; i++) {
+    rows[0].components[0].options.push({ label: team[i].name, value: `pokemonTeam_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id)) } });
   }
 
   return { components: rows };
 }
 
-module.exports = { getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+function returnPokemonStats(stats) {
+  let str = "";
+  for (const [key, value] of Object.entries(stats)) {
+    str += `${titleCase(key.split("-").join(" "))}: **${value}**\n`;
+  }
+  return str;
+}
+
+function returnPokemonMoves(moves) {
+  let str = "";
+  const filtered = moves.filter((move) => move?.selected);
+  for (const move of filtered) {
+    if(move.type === "status") {
+      //str += `${move.name}: Healing: ${move.data.healing}\n`
+    } else {
+      str += `**${move.name}:** Type: ${titleCase(move.data.type)}, Accuracy: ${move.data.accuracy}, Power: ${move.data.power}\n`
+    }
+  }
+  return str;
+}
+
+function getPokemonLevel(xp) {
+  xp = 175
+  let i = 1;
+  let level = 0;
+  let xpLeft = xp
+  while(xpLeft >= 0 && xpLeft - xpList[i] >= 0) {
+    xpLeft = xpLeft - xpList[i]
+    level++
+    i++
+  }
+  return `${level}`;
+}
+
+module.exports = { returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

@@ -7,4 +7,6 @@ npm-debug.log*
 node_modules/
 .npm
 .env
-constants/JSON
+constants/JSON/emojiList.json
+constants/JSON/INFO.js
+constants/JSON/pokemonList.json

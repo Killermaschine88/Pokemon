@@ -1,4 +1,4 @@
-const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon } = require("./functions");
+const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, returnPokemonStats, getPokemonLevel, returnPokemonMoves } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
 const { getCurrentProfile } = require("./mongoFunctions");
@@ -158,6 +158,15 @@ class GameMap {
       newField: this.newField || 1,
     };
     return obj;
+  }
+
+  getPokemonTeamInfo(int, id) {
+    const pokemon = this.profile.team[id];
+    const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
+    pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
+    pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
+
+    int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
   }
 
   // Unused atm

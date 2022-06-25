@@ -105,7 +105,9 @@ class GameMap {
   setVariables(interaction, collector) {
     this.client = interaction.client;
     this.user = interaction.user;
-    this.profile = getCurrentProfile(this.client, this.user, this.profileIndex);
+    getCurrentProfile(this.client, this.user, this.profileIndex).then((data) => {
+      this.profile = data;
+    });
     this.collector = collector;
     return this;
   }

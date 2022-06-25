@@ -1,8 +1,8 @@
 let emojis = require("../JSON/emojiList");
 const pokemonList = require("../JSON/pokemonList");
-const { getRandomNumber } = require("../util/functions");
+const { getRandomNumber, emojiStringToId } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
-const { uploadEmoji } = require("../../events/messageCreate");
+const { uploadEmoji } = require("../../constants/util/emoji");
 const { client } = require("../../index");
 const fs = require("fs");
 
@@ -11,6 +11,8 @@ function getEmoji(name, shiny = false, way = "down") {
     if (name === 0) return emojis[name + way];
     else return emojis[name];
   }
+
+  emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
 
   name = name.toUpperCase();
 
@@ -168,11 +170,11 @@ function generateStarterSelection() {
 }
 
 function generateMenu() {
-  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Empty").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
+  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
   const options = [
     { label: "Back to Game", emoji: "977989090714714183", value: "movement" },
     { label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
-    { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemon" },
+    { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemonTeam" },
     { label: "Bag", emoji: "989794285002047518", value: "bag" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
     { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" },
@@ -185,4 +187,16 @@ function generateMenu() {
   return { components: rows };
 }
 
-module.exports = { generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+function getPokemonTeamRow(team) {
+  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select a Pokemon to View").setMinValues(1).setMaxValues(1).setCustomId("pokemonTeamSelect"))];
+
+  rows[0].components[0].options.push({ label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" }})
+
+  for(let i = 0; i < team.length; i++) {
+    rows[0].components[0].options.push({ label: team[i].name, value: `pokemon_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id )) }})
+  }
+
+  return { components: rows };
+}
+
+module.exports = { getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

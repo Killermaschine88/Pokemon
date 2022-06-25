@@ -25,4 +25,8 @@ function titleCase(str) {
   });
 }
 
-module.exports = { getRandomNumber, sleep, badName, titleCase };
+function emojiStringToId(emoji) {
+  return emoji.split(":")[2].replace(">", "")
+}
+
+module.exports = { getRandomNumber, sleep, badName, titleCase, emojiStringToId };;

@@ -1,6 +1,6 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { newProfileModal } = require("../../constants/pokemon/constants");
-const { updateEmbed, generateProfileSelection, getStarterPokemon, generateStarterSelection } = require("../../constants/pokemon/functions");
+const { generateProfileSelection, getStarterPokemon, generateStarterSelection } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile } = require("../../constants/pokemon/mongoFunctions");
 const { menuHandler } = require("../../constants/pokemon/handlers");
@@ -57,17 +57,18 @@ module.exports = {
         await createProfile(interaction, name, Game, starterPokemon);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
         await interaction.editReply(generateProfileSelection(profiles));
+      } else if (id === "movement") {
+        // Returning components back to walking row
+        Game.updateMessage();
       }
 
       //Defering
-      if (!["newProfile"].includes(id)) {
-        await i.deferUpdate().catch((err) => err);
-      }
+      await i.deferUpdate().catch((err) => err);
 
       collector.resetTimer(); //Reset timer on input
 
       //Menu Handler
-      if (["menu", "pokedex", "pokemon", "bag", "save", "movement", "exitAndSave"].includes(id)) {
+      if (["menu", "pokedex", "pokemonTeam", "bag", "save", "exitAndSave", "backToMenu"].includes(id)) {
         await menuHandler(i, Game);
       }
 
@@ -79,7 +80,7 @@ module.exports = {
     });
 
     collector.on("end", async (__, reason) => {
-      await reply.edit({ content: reason ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
+      await reply.edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
 
       if (Game?.isStarted()) {
         await saveProfile(interaction, Game);

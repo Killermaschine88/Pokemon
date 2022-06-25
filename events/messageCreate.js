@@ -1,4 +1,4 @@
-const { generatePokemonEntry, uploadEmoji } = require("../constants/util/emoji")
+const { generatePokemonEntry, uploadEmoji } = require("../constants/util/emoji");
 
 module.exports = {
   name: "messageCreate",

@@ -37,6 +37,7 @@ async function uploadEmoji(input, client) {
 
   fs.writeFileSync(__dirname + "/../JSON/emojiList.json", JSON.stringify(emojiList, null, 2));
 
+  await generatePokemonEntry(name.toLowerCase());
   client.channels.cache.get("989085658486292480").send(`Created <:${normalEmoji.name}:${normalEmoji.id}> <:${shinyEmoji.name}:${shinyEmoji.id}>, \`<:${normalEmoji.name}:${normalEmoji.id}>\` \`<:${shinyEmoji.name}:${shinyEmoji.id}>\``);
   return true;
 }

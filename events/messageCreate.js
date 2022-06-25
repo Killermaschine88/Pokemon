@@ -1,10 +1,8 @@
 const sharp = require("sharp");
 const axios = require("axios");
 const { returnTypes, returnStats, returnMoves } = require("../constants/util/apiFunctions");
-const fs = require("fs");
 const { titleCase } = require("../constants/util/functions");
-
-const guilds = ["944141746483372143"];
+const fs = require("fs");
 
 module.exports = {
   name: "messageCreate",
@@ -12,18 +10,13 @@ module.exports = {
     if (message.author.bot) return;
 
     if (message.channel.id === "989085658486292480") {
-      const split = message.content.split(" ");
       try {
         await message.delete();
 
         //Get Emoji and Upload to guild
-        const emoji = await uploadEmoji(split, client);
-
-        //Return result
-        await message.channel.send(`Created <:${emoji.name}:${emoji.id}>, \`<:${emoji.name}:${emoji.id}>\``);
-        client.channels.cache.get("989152766062649394").send(`<:${emoji.name}:${emoji.id}> \`${emoji.name}: "<:${emoji.name}:${emoji.id}>",\``);
+        await uploadEmoji(message.content, client);
       } catch (err) {
-        await message.channel.send(`Something went wrong while uploading <${split[0]}> with name \`${split[1]}\``);
+        await message.channel.send(`Something went wrong while uploading \`${split[0]}\``);
         console.log(err);
       }
     }
@@ -61,15 +54,11 @@ module.exports = {
   },
 };
 
-async function uploadEmoji(split, client) {
+async function uploadEmoji(input, client) {
   //Misc
-  let url = split[0];
-  let name = split[0];
-  let isShiny = split[1];
-
-  //Cuz im lame
-  if (isShiny) name += "_SHINY";
-  else name += "_NORMAL";
+  const guilds = ["944141746483372143"];
+  let url = input;
+  let name = input;
 
   //Getting Random guild
   const guild = client.guilds.cache.get(guilds[Math.floor(Math.random() * guilds.length)]);
@@ -77,19 +66,29 @@ async function uploadEmoji(split, client) {
   //Getting Image Link
   let pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${url}`)).data;
 
-  if (isShiny) pokemon = pokemon.sprites.front_shiny;
-  else pokemon = pokemon.sprites.front_default;
+  let normalPokemon = pokemon.sprites.front_default;
+  let shinyPokemon = pokemon.sprites.front_shiny;
 
   // Fetch url and create buffer
-  const buffer = await axios.get(pokemon, { responseType: "arraybuffer" });
+  const normalBuffer = await axios.get(normalPokemon, { responseType: "arraybuffer" });
+  const shinyBuffer = await axios.get(shinyPokemon, { responseType: "arraybuffer" });
 
   //Resize image
-  const file = await sharp(buffer.data).trim(10).toBuffer({ resolveWithObject: true });
+  const normalFile = await sharp(normalBuffer.data).trim(10).toBuffer({ resolveWithObject: true });
+  const shinyFile = await sharp(shinyBuffer.data).trim(10).toBuffer({ resolveWithObject: true });
 
   //Upload emoji to discord
-  const emoji = await guild.emojis.create(file.data, name.toUpperCase());
+  const normalEmoji = await guild.emojis.create(normalFile.data, `${name.toUpperCase()}_NORMAL`);
+  const shinyEmoji = await guild.emojis.create(shinyFile.data, `${name.toUpperCase()}_SHINY`);
 
-  return emoji;
+  const emojiList = JSON.parse(fs.readFileSync(__dirname + "/../constants/JSON/emojiList.json"));
+
+  emojiList[name.toUpperCase()] = { normal: `<:${normalEmoji.name}:${normalEmoji.id}>`, shiny: `<:${shinyEmoji.name}:${shinyEmoji.id}>` };
+
+  fs.writeFileSync(__dirname + "/../constants/JSON/emojiList.json", JSON.stringify(emojiList, null, 2));
+
+  client.channels.cache.get("989085658486292480").send(`Created <:${normalEmoji.name}:${normalEmoji.id}> <:${shinyEmoji.name}:${shinyEmoji.id}>, \`<:${normalEmoji.name}:${normalEmoji.id}>\` \`<:${shinyEmoji.name}:${shinyEmoji.id}>\``);
+  return true;
 }
 
 async function generatePokemonEntry(name) {
@@ -108,3 +107,5 @@ async function generatePokemonEntry(name) {
 
   fs.writeFileSync(__dirname + "/../constants/JSON/pokemonList.json", JSON.stringify(list));
 }
+
+module.exports = { uploadEmoji };

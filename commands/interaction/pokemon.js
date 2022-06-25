@@ -42,6 +42,7 @@ module.exports = {
         i.showModal(newProfileModal);
       } else if (id === "newProfileModal") {
         //Handles name input
+        await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
         if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });

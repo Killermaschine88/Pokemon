@@ -9,6 +9,7 @@ const client = new Discord.Client({
 });
 
 client.login(process.env.DISCORD_TOKEN);
+module.exports = { client };
 
 //Mongo DB
 const { connectMongo } = require("./constants/client/mongo");

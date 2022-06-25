@@ -1,7 +1,10 @@
-const { emojis } = require("../JSON/emojiList");
+let emojis = require("../JSON/emojiList");
 const pokemonList = require("../JSON/pokemonList");
 const { getRandomNumber } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
+const { uploadEmoji } = require("../../events/messageCreate");
+const { client } = require("../../index");
+const fs = require("fs");
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {
@@ -9,8 +12,16 @@ function getEmoji(name, shiny = false, way = "down") {
     else return emojis[name];
   }
 
-  if (shiny) return emojis[name.toUpperCase()].shiny;
-  else return emojis[name.toUpperCase()].normal;
+  name = name.toUpperCase();
+
+  if (!emojis[name]) {
+    uploadEmoji(name.toLowerCase(), client);
+    emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
+    return emojis["MISSING_TEXTURE"];
+  }
+
+  if (shiny) return emojis[name].shiny;
+  else return emojis[name].normal;
 }
 
 function getOffset(id) {
@@ -104,7 +115,7 @@ function pokemonFound() {
 
 function generateRandomPokemon() {
   // !!! FIX ME (should probably be fixed)
-  let pokemonNames = pokemonList.map(pokemon => pokemon.id)
+  let pokemonNames = pokemonList.map((pokemon) => pokemon.id);
   const pokemon = [pokemonNames][Math.floor(Math.random() * pokemonNames.length)];
   return pokemonList[pokemon];
 }

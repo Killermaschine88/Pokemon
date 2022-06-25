@@ -19,7 +19,13 @@ async function menuHandler(interaction, Game) {
   } else if (id === "pokemonTeam") {
     // Showing current Pokemon in the Team
     Game.getMessage().edit(getPokemonTeamRow(Game.getProfile().team));
+  } else if(id === "pokemonStorage") {
+    // show pc
   }
 }
 
-module.exports = { menuHandler };
+async function storageHandler(interaction, Game) {
+  //
+}
+
+module.exports = { menuHandler, storageHandler };

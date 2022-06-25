@@ -176,6 +176,7 @@ function generateMenu() {
     { label: "Back to Game", emoji: "977989090714714183", value: "movement" },
     { label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
     { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemonTeam" },
+    { label: "Pokemon Storage", emoji: "829731463804485653", value: "pokemonStorage" },
     { label: "Bag", emoji: "989794285002047518", value: "bag" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
     { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" },

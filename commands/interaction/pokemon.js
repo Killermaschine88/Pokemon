@@ -3,7 +3,7 @@ const { newProfileModal } = require("../../constants/pokemon/constants");
 const { generateProfileSelection, getStarterPokemon, generateStarterSelection } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile } = require("../../constants/pokemon/mongoFunctions");
-const { menuHandler } = require("../../constants/pokemon/handlers");
+const { menuHandler, storageHandler } = require("../../constants/pokemon/handlers");
 const { badName } = require("../../constants/util/functions");
 const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions");
 
@@ -80,8 +80,13 @@ module.exports = {
         Game.getPokemonTeamInfo(i, id.replace("pokemonTeam_", "")); // Display info for selected pokemon in team
       }
 
+      // PC Handler (Depositing and Withdrawing Pokemon)
+      if(id.startsWith("withdrawPokemon_") || id.startsWith("depositPokemon_")) {
+        await storageHandler(i, Game);
+      }
+
       //Menu Handler
-      if (["menu", "pokedex", "pokemonTeam", "bag", "save", "exitAndSave", "backToMenu"].includes(id)) {
+      if (["menu", "pokedex", "pokemonTeam", "bag", "save", "exitAndSave", "backToMenu", "pokemonStorage"].includes(id)) {
         await menuHandler(i, Game);
       }
 

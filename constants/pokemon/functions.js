@@ -1,6 +1,6 @@
 let emojis = require("../JSON/emojiList");
 const pokemonList = require("../JSON/pokemonList");
-const { xpList } = require("../JSON/xpList")
+const { xpList } = require("../JSON/xpList");
 const { getRandomNumber, emojiStringToId, titleCase } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 const { uploadEmoji } = require("../../constants/util/emoji");
@@ -117,9 +117,8 @@ function pokemonFound() {
 }
 
 function generateRandomPokemon() {
-  // !!! FIX ME (should probably be fixed)
-  let pokemonNames = pokemonList.map((pokemon) => pokemon.id);
-  const pokemon = [pokemonNames][Math.floor(Math.random() * pokemonNames.length)];
+  let pokemonNames = Object.keys(pokemonList)
+  const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
   return pokemonList[pokemon];
 }
 
@@ -139,13 +138,14 @@ function generateProfileSelection(list) {
   if (list.length > 0) {
     let index = 0;
     for (const profile of list) {
-      row.components.push(new MessageButton().setCustomId(`${index}`).setLabel(`Load: ${profile.name}`).setStyle("SECONDARY"));
+      row.components.push(new MessageButton().setCustomId(`profile_${index}`).setLabel(`Load: ${profile.name}`).setStyle("SECONDARY"));
       index++;
     }
-    if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profile").setStyle("SECONDARY"));
+    if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profile").setStyle("SUCCESS"));
   } else {
-    row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profle").setStyle("SECONDARY"));
+    row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profle").setStyle("SUCCESS"));
   }
+  if(row.components.length > 1) row.components.push(new MessageButton().setCustomId("deleteProfile").setLabel("Delete Profle").setStyle("DANGER"));
 
   return { embeds: [embed], components: [row] };
 }
@@ -213,26 +213,41 @@ function returnPokemonMoves(moves) {
   let str = "";
   const filtered = moves.filter((move) => move?.selected);
   for (const move of filtered) {
-    if(move.type === "status") {
+    if (move.type === "status") {
       //str += `${move.name}: Healing: ${move.data.healing}\n`
     } else {
-      str += `**${move.name}:** Type: ${titleCase(move.data.type)}, Accuracy: ${move.data.accuracy}, Power: ${move.data.power}\n`
+      str += `**${move.name}:** Type: ${titleCase(move.data.type)}, Accuracy: ${move.data.accuracy}, Power: ${move.data.power}\n`;
     }
   }
   return str;
 }
 
 function getPokemonLevel(xp) {
-  xp = 175
   let i = 1;
   let level = 0;
-  let xpLeft = xp
-  while(xpLeft >= 0 && xpLeft - xpList[i] >= 0) {
-    xpLeft = xpLeft - xpList[i]
-    level++
-    i++
+  let xpLeft = xp;
+  while (xpLeft >= 0 && xpLeft - xpList[i] >= 0) {
+    xpLeft = xpLeft - xpList[i];
+    level++;
+    i++;
   }
   return `${level}`;
 }
 
-module.exports = { returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+function generateStorageView() {
+  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
+  const options = [
+    { label: "Back to Menu", emoji: "977989090714714183", value: "backToMenu" },
+    { label: "View Stored Pokemon", emoji: "", value: "viewStoredPokemon" },
+    { label: "Store Pokemon", emoji: "", value: "storePokemon" },
+    { label: "Withdraw Pokemon", emoji: "", value: "withdrawPokemon" },
+  ];
+
+  for (const option of options) {
+    rows[0].components[0].options.push({ label: option.label, value: option.value }); //emoji: { id: option.emoji } });
+  }
+
+  return { components: rows };
+}
+
+module.exports = { generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

@@ -74,14 +74,11 @@ class GameMap {
     this.pos = returnValue.pos;
     this.lastField = returnValue.lastField;
     this.newField = returnValue.newField;
+    return this;
   }
 
   updateEmbed() {
     return this.embed.setDescription(this.renderMap());
-  }
-
-  setMessage(message) {
-    this.message = message;
   }
 
   async updateMessage() {
@@ -97,6 +94,11 @@ class GameMap {
   }
 
   // Setters
+  setMessage(message) {
+    this.message = message;
+    return this
+  }
+
   setProfileIndex(index) {
     this.profileIndex = index;
     return this;
@@ -122,13 +124,14 @@ class GameMap {
     return this;
   }
 
-  // Getters
-  getProfileIndex() {
-    return this.profileIndex;
+  setStoragePages(obj) {
+    this.storagePages = obj;
+    return this;
   }
 
-  getProfile() {
-    return this.profile;
+  // Getters
+  getProfileData(prop) {
+    return prop ? this.profile[prop] : this;
   }
 
   getMessage() {
@@ -141,6 +144,10 @@ class GameMap {
 
   getData(data) {
     return this[data];
+  }
+
+  getStoragePage(page) {
+    return this.storagePages[page];
   }
 
   getProfileForSave() {

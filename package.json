@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js -n Development",
+    "start": "pm2 start index.js -n Pokemon",
     "format": "npx prettier --write ."
   },
   "keywords": [],

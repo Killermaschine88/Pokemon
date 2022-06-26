@@ -27,14 +27,18 @@ async function createProfile(interaction, name, Game, starterPokemon) {
 
 async function hasProfileWithName(interaction, name) {
   const account = await interaction.client.mongo.findOne({ _id: interaction.user.id });
+  //console.log(account)
 
   if (!account) return false;
-  return account.profiles.every((profile) => profile.name === name);
+  for(const profile of account.profiles) {
+    if(profile.name === name) return true;
+  }
+  return false
 }
 
 async function saveProfile(interaction, Game) {
   let profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id }))?.profiles || [];
-  profiles[Game.getProfileIndex()] = Game.getProfileForSave();
+  profiles[Game.getData("profileIndex")] = Game.getProfileForSave();
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
     {
@@ -50,4 +54,20 @@ async function getCurrentProfile(client, user, profileIndex) {
   return player.profiles[profileIndex];
 }
 
-module.exports = { createProfile, saveProfile, getCurrentProfile, hasProfileWithName };
+async function deleteProfile(interaction, name) {
+  const profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles
+  let newProfiles = []
+  for(const profile of profiles) {
+    if(profile.name !== name) newProfiles.push(profile)
+  }
+  
+  await interaction.client.mongo.updateOne(
+    { _id: interaction.user.id },
+    { $set: {
+      profiles: newProfiles
+    } },
+    { upsert: true },
+  )
+}
+
+module.exports = { createProfile, saveProfile, getCurrentProfile, hasProfileWithName, deleteProfile };

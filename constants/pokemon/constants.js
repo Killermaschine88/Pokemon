@@ -10,4 +10,9 @@ const newProfileModal = new Modal()
   .setTitle("Profile Name")
   .addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Your name for the Profile (min 5, max 25)").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
 
-module.exports = { rows, newProfileModal };
+  const deleteProfileModal = new Modal()
+  .setCustomId("deleteProfileModal")
+  .setTitle("Profile Name")
+  .addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Profile Name to delete").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
+
+module.exports = { rows, newProfileModal, deleteProfileModal };

@@ -102,4 +102,4 @@ const xpList = {
   100: 600000,
 };
 
-module.exports = { xpList }
+module.exports = { xpList };

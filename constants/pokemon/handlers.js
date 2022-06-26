@@ -1,4 +1,4 @@
-const { generateMenu, getPokemonTeamRow } = require("./functions");
+const { generateMenu, getPokemonTeamRow, generateStorageView } = require("./functions");
 const { saveProfile } = require("./mongoFunctions");
 
 async function menuHandler(interaction, Game) {
@@ -7,24 +7,33 @@ async function menuHandler(interaction, Game) {
   //Missing: pokedex, bag
 
   if (["menu", "backToMenu"].includes(id)) {
-    await Game.getMessage().edit(generateMenu());
-  } else if (id === "save") {
+    return Game.getMessage().edit(generateMenu());
+  }
+
+  if (id === "save") {
     // Saving profile
     await saveProfile(interaction, Game);
     return interaction.followUp({ content: "Saved successfully.", ephemeral: true });
-  } else if (id === "exitAndSave") {
+  }
+
+  if (id === "exitAndSave") {
     // Saving and closing game
     await saveProfile(interaction, Game);
-    Game.getData("collector")?.stop("Saved game and exited");
-  } else if (id === "pokemonTeam") {
+    return Game.getData("collector")?.stop("Saved game and exited");
+  }
+
+  if (id === "pokemonTeam") {
     // Showing current Pokemon in the Team
-    Game.getMessage().edit(getPokemonTeamRow(Game.getProfile().team));
-  } else if(id === "pokemonStorage") {
-    // show pc
+    return Game.getMessage().edit(getPokemonTeamRow(Game.getProfileData("team")));
+  }
+
+  if (id === "pokemonStorage") {
+    // Openning Menu to choose action for storage
+    return Game.getMessage().edit(generateStorageView());
   }
 }
 
-async function storageHandler(interaction, Game) {
+async function storageHandler(interaction, id, Game) {
   //
 }
 

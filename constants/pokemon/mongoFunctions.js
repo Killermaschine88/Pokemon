@@ -14,7 +14,7 @@ async function createProfile(interaction, name, Game, starterPokemon) {
           bag: [], // Bag of Items (Pokeballs, etc)
           badges: [], // Gym Badges
           pokedex: [], // List of found Pokemon
-          storage: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 19: [], 20: [], 21: [], 22: [], 23: [], 24: [], 25: [] }, // Storage for exces pokemon
+          storage: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 19: [], 20: [], 21: [], 22: [], 23: [] }, // Storage for exces pokemon
         },
       },
     },
@@ -30,10 +30,10 @@ async function hasProfileWithName(interaction, name) {
   //console.log(account)
 
   if (!account) return false;
-  for(const profile of account.profiles) {
-    if(profile.name === name) return true;
+  for (const profile of account.profiles) {
+    if (profile.name === name) return true;
   }
-  return false
+  return false;
 }
 
 async function saveProfile(interaction, Game) {
@@ -55,19 +55,21 @@ async function getCurrentProfile(client, user, profileIndex) {
 }
 
 async function deleteProfile(interaction, name) {
-  const profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles
-  let newProfiles = []
-  for(const profile of profiles) {
-    if(profile.name !== name) newProfiles.push(profile)
+  const profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
+  let newProfiles = [];
+  for (const profile of profiles) {
+    if (profile.name !== name) newProfiles.push(profile);
   }
-  
+
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
-    { $set: {
-      profiles: newProfiles
-    } },
-    { upsert: true },
-  )
+    {
+      $set: {
+        profiles: newProfiles,
+      },
+    },
+    { upsert: true }
+  );
 }
 
 module.exports = { createProfile, saveProfile, getCurrentProfile, hasProfileWithName, deleteProfile };

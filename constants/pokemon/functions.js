@@ -3,7 +3,6 @@ const pokemonList = require("../JSON/pokemonList");
 const { xpList } = require("../JSON/xpList");
 const { getRandomNumber, emojiStringToId, titleCase } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
-const { uploadEmoji } = require("../../constants/util/emoji");
 const { client } = require("../../index");
 const fs = require("fs");
 
@@ -13,13 +12,12 @@ function getEmoji(name, shiny = false, way = "down") {
     else return emojis[name];
   }
 
-  emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
+  //emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
 
   name = name.toUpperCase();
 
   if (!emojis[name]) {
-    uploadEmoji(name.toLowerCase(), client);
-    emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
+    client.channels.cache.get("990697665719316510").send(`Missing emoji for ${name}`);
     return emojis["MISSING_TEXTURE"];
   }
 
@@ -117,7 +115,7 @@ function pokemonFound() {
 }
 
 function generateRandomPokemon() {
-  let pokemonNames = Object.keys(pokemonList)
+  let pokemonNames = Object.keys(pokemonList);
   const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
   return pokemonList[pokemon];
 }
@@ -145,7 +143,7 @@ function generateProfileSelection(list) {
   } else {
     row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profle").setStyle("SUCCESS"));
   }
-  if(row.components.length > 1) row.components.push(new MessageButton().setCustomId("deleteProfile").setLabel("Delete Profle").setStyle("DANGER"));
+  if (row.components.length > 1) row.components.push(new MessageButton().setCustomId("deleteProfile").setLabel("Delete Profle").setStyle("DANGER"));
 
   return { embeds: [embed], components: [row] };
 }
@@ -238,9 +236,9 @@ function generateStorageView() {
   const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
   const options = [
     { label: "Back to Menu", emoji: "977989090714714183", value: "backToMenu" },
-    { label: "View Stored Pokemon", emoji: "", value: "viewStoredPokemon" },
-    { label: "Store Pokemon", emoji: "", value: "storePokemon" },
-    { label: "Withdraw Pokemon", emoji: "", value: "withdrawPokemon" },
+    { label: "View Stored Pokemon", emoji: "", value: "displayStorageRows" },
+    //{ label: "Store Pokemon", emoji: "", value: "storePokemonRow_0" },
+    //{ label: "Withdraw Pokemon", emoji: "", value: "withdrawPokemonRow_0" },
   ];
 
   for (const option of options) {
@@ -250,4 +248,47 @@ function generateStorageView() {
   return { components: rows };
 }
 
-module.exports = { generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+async function getStorageRow(Game, int, id) {
+  //INWORK
+  if(id === "displayStorageRows") {
+    const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Storage Page").setMinValues(1).setMaxValues(1).setCustomId("storageRowSelect"))];
+    const storage = Game.profile.storage;
+    for(const [key, value] of Object.entries(storage)) {
+      if(value.length === 0) continue;
+
+      rows[0].components[0].options.push({ label: `Storage Page ${key}`, value: `storagePage_${key}` });
+    }
+    if(rows[0].components[0].options.length === 0) return await int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
+    return await Game.message.edit({ components: rows });
+  }
+
+  if(id.startsWith("storagePage_")) {
+    const page = id.split("_")[1];
+    const storage = Game.profile.storage[page]
+    let rowAmount = 1
+    let pokemonAmount = 0
+    const rows = [int.message.components[0], new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`))]
+
+    for(const pokemon of storage) {
+      const options = rows[rowAmount].components[0].options
+      if(options.length === 24) {
+        rowAmount++;
+        rows.push(new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`)))
+      }
+      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id)) }})
+      pokemonAmount++
+    }
+
+    return await Game.message.edit({ components: rows })
+  }
+}
+
+async function displayPokemon(int, pokemon) {
+  const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
+    pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
+    pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
+
+    return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+}
+
+module.exports = { displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

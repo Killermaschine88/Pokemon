@@ -8,6 +8,6 @@ module.exports = {
       type: "PLAYING",
     });
 
-    //client.guilds.cache.get("944141746483372143").commands.set(commands)
+    //client.guilds.cache.get("990697176457941102").commands.set(commands)
   },
 };

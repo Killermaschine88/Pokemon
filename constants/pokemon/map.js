@@ -1,4 +1,4 @@
-const { getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, returnPokemonStats, getPokemonLevel, returnPokemonMoves } = require("./functions");
+const { displayPokemon, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, returnPokemonStats, getPokemonLevel, returnPokemonMoves, getStorageRow } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
 const { getCurrentProfile } = require("./mongoFunctions");
@@ -96,7 +96,7 @@ class GameMap {
   // Setters
   setMessage(message) {
     this.message = message;
-    return this
+    return this;
   }
 
   setProfileIndex(index) {
@@ -124,11 +124,6 @@ class GameMap {
     return this;
   }
 
-  setStoragePages(obj) {
-    this.storagePages = obj;
-    return this;
-  }
-
   // Getters
   getProfileData(prop) {
     return prop ? this.profile[prop] : this;
@@ -144,10 +139,6 @@ class GameMap {
 
   getData(data) {
     return this[data];
-  }
-
-  getStoragePage(page) {
-    return this.storagePages[page];
   }
 
   getProfileForSave() {
@@ -167,13 +158,19 @@ class GameMap {
     return obj;
   }
 
-  getPokemonTeamInfo(int, id) {
+  async getPokemonTeamInfo(int, id) {
     const pokemon = this.profile.team[id];
-    const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
-    pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
-    pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
+    return await displayPokemon(int, pokemon)
+  }
 
-    int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+  async getStorageRow(int, id) {
+    return await getStorageRow(this, int, id);
+  }
+
+  async showStoragePokemon(int, id) {
+    const split = id.split("_")
+    const pokemon = this.profile.storage[split[1]][split[2]]
+    return await displayPokemon(int, pokemon)
   }
 
   // Unused atm

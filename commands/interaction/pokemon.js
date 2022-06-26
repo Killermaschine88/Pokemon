@@ -31,7 +31,7 @@ module.exports = {
       if (!i.isButton() && !i.isModalSubmit() && !i.isSelectMenu()) return;
       const id = i?.values?.[0] || i.customId;
 
-      if(!["newProfile", "deleteProfile"].includes(id)) {
+      if (!["newProfile", "deleteProfile"].includes(id)) {
         await i.deferUpdate().catch((err) => err);
       }
       collector.resetTimer(); //Reset timer on input
@@ -51,7 +51,7 @@ module.exports = {
       }
 
       //Profile deletion modal
-      if(id === "deleteProfile") {
+      if (id === "deleteProfile") {
         return await i.showModal(deleteProfileModal);
       }
 
@@ -71,13 +71,12 @@ module.exports = {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
-        if (!await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't delete profile with the name \`${name}\` as it doesn't exist exists.`, ephemeral: true });
-        
-        await deleteProfile(interaction, name)
+        if (!(await hasProfileWithName(interaction, name))) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't delete profile with the name \`${name}\` as it doesn't exist exists.`, ephemeral: true });
+
+        await deleteProfile(interaction, name);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
         return await interaction.editReply(generateProfileSelection(profiles));
       }
-
 
       //Generate profile and update message
       if (["starter0", "starter1", "starter2"].includes(id)) {
@@ -99,10 +98,20 @@ module.exports = {
         return await Game.getPokemonTeamInfo(i, id.replace("pokemonTeam_", "")); // Display info for selected pokemon in team
       }
 
-      // PC Handler (Depositing and Withdrawing Pokemon) // INWORK
-      if(id.startsWith("withdrawPokemon_") || id.startsWith("storePokemon_")) {
-        return await storageHandler(i, id, Game);
+      // Display Storage Rows
+      if (id === "displayStorageRows" || id.startsWith("storagePage_")) {
+        return await Game.getStorageRow(i, id);
       }
+
+      // Display specified pokemon from storage
+      if(id.startsWith("storagePokemon_")) {
+        return await Game.showStoragePokemon(i, id)
+      }
+
+      // PC Handler (Depositing and Withdrawing Pokemon) // INWORK
+      /*if (id.startsWith("viewPokemon_") || id.startsWith("withdrawPokemon_") || id.startsWith("storePokemon_")) {
+        return await storageHandler(i, id, Game);
+      }*/
 
       //Menu Handler
       if (["menu", "pokedex", "pokemonTeam", "bag", "save", "exitAndSave", "backToMenu", "pokemonStorage"].includes(id)) {
@@ -116,7 +125,9 @@ module.exports = {
     });
 
     collector.on("end", async (__, reason) => {
-      await reply.edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
+      await Game.getMessage()
+        .edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] })
+        .catch((err) => err);
 
       if (Game?.isStarted()) {
         return await saveProfile(interaction, Game);

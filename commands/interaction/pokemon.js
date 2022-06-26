@@ -1,6 +1,6 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants");
-const { generateProfileSelection, getStarterPokemon, generateStarterSelection } = require("../../constants/pokemon/functions");
+const { generateProfileSelection, getStarterPokemon, generateStarterSelection, withdrawPokemon } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/mongoFunctions");
 const { menuHandler, storageHandler } = require("../../constants/pokemon/handlers");
@@ -18,8 +18,7 @@ module.exports = {
     const reply = await interaction.editReply(generateProfileSelection(profiles));
 
     const collector = new InteractionCollector(interaction.client, {
-      time: 30000, //5 * 60 * 1000,
-      message: reply,
+      time: 10000, //5 * 60 * 1000,
     });
 
     //Once Profile Decided
@@ -28,6 +27,7 @@ module.exports = {
 
     //Collector
     collector.on("collect", async (i) => {
+      if(i.user.id !== interaction.user.id) return
       if (!i.isButton() && !i.isModalSubmit() && !i.isSelectMenu()) return;
       const id = i?.values?.[0] || i.customId;
 
@@ -100,12 +100,18 @@ module.exports = {
 
       // Display Storage Rows
       if (id === "displayStorageRows" || id.startsWith("storagePage_")) {
-        return await Game.getStorageRow(i, id);
+        return await Game.getStorageRow(i, id); //To display pokemon only
       }
 
       // Display specified pokemon from storage
       if(id.startsWith("storagePokemon_")) {
         return await Game.showStoragePokemon(i, id)
+      }
+
+      if(id.startsWith("withdrawPokemon_")) {
+        i.message.components[0].components[0].disabled = true
+        await i.editReply({ components: i.message.components })
+        return await withdrawPokemon(id, i, Game)
       }
 
       // PC Handler (Depositing and Withdrawing Pokemon) // INWORK

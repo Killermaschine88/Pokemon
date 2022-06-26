@@ -237,8 +237,7 @@ function generateStorageView() {
   const options = [
     { label: "Back to Menu", emoji: "977989090714714183", value: "backToMenu" },
     { label: "View Stored Pokemon", emoji: "", value: "displayStorageRows" },
-    //{ label: "Store Pokemon", emoji: "", value: "storePokemonRow_0" },
-    //{ label: "Withdraw Pokemon", emoji: "", value: "withdrawPokemonRow_0" },
+    //{ label: "Store Pokemon", emoji: "", value: "storePokemonRow },
   ];
 
   for (const option of options) {
@@ -283,12 +282,32 @@ async function getStorageRow(Game, int, id) {
   }
 }
 
-async function displayPokemon(int, pokemon) {
+async function displayPokemon(int, pokemon, withdrawAble=false, id) {
   const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
     pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
     pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
 
-    return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+    if(withdrawAble) {
+      const split = id.split("_")
+      const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
+      return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
+    } else {
+      return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+    }
 }
 
-module.exports = { displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+async function withdrawPokemon(id, int, Game) {
+  if(Game.profile.team.length === 6) {
+    await int.followUp({ content: "You already have 6 Pokemon in your team, store one first so you have space in your team.", ephemeral: true });
+  } else {
+  const split = id.split("_")
+  const page = split[1]
+  const index = split[2];
+  const pokemon = Game.profile.storage[page][index]
+  Game.profile.team.push(pokemon)
+  Game.profile.storage[page].splice(index, 1)
+  return Game
+  }
+}
+
+module.exports = { withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

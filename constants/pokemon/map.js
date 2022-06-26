@@ -5,6 +5,7 @@ const { getCurrentProfile } = require("./mongoFunctions");
 
 class GameMap {
   constructor(existingSave) {
+    console.log(existingSave)
     if (existingSave) {
       this.name = existingSave.name;
       this.created = existingSave.created;
@@ -126,7 +127,7 @@ class GameMap {
 
   // Getters
   getProfileData(prop) {
-    return prop ? this.profile[prop] : this;
+    return prop ? this.profile[prop] : this.profile; //FIXME rework profile shit being wrong whilst saving (figure out how to properly do this shit istg kms)
   }
 
   getMessage() {
@@ -145,6 +146,7 @@ class GameMap {
     let obj = {};
     for (const [key, value] of Object.entries(this)) {
       if (["name", "created", "starterPokemon", "pokemonDollars", "team", "bag", "badges", "pokedex", "storage"].includes(key)) obj[key] = value;
+      if(key === "profile") console.log({key, value})
     }
 
     obj["game"] = {
@@ -170,7 +172,7 @@ class GameMap {
   async showStoragePokemon(int, id) {
     const split = id.split("_")
     const pokemon = this.profile.storage[split[1]][split[2]]
-    return await displayPokemon(int, pokemon)
+    return await displayPokemon(int, pokemon, true, id)
   }
 
   // Unused atm

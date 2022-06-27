@@ -149,7 +149,7 @@ function generateProfileSelection(list) {
 
 function getStarterPokemon(id) { //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
   const starterPokemon = pokemonList[id]
-  
+
   if(isShinyPokemon()) {
     starterPokemon.isShiny = true;
   }
@@ -199,7 +199,7 @@ function getPokemonTeamRow(team) {
   rows[0].components[0].options.push({ label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" } });
 
   for (let i = 0; i < team.length; i++) {
-    rows[0].components[0].options.push({ label: team[i].name, value: `pokemonTeam_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id)) } });
+    rows[0].components[0].options.push({ label: team[i].name, value: `pokemonTeam_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id, team[i].isShiny)) } });
   }
 
   return { components: rows };
@@ -279,7 +279,7 @@ async function getStorageRow(Game, int, id) {
         rowAmount++;
         rows.push(new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`)));
       }
-      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id)) } });
+      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id, pokemon.isShiny)) } });
       pokemonAmount++;
     }
 
@@ -288,7 +288,7 @@ async function getStorageRow(Game, int, id) {
 }
 
 async function displayPokemon(int, pokemon, state, id) {
-  const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
+  const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getPokemonString(pokemon)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
   pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
   pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
 
@@ -314,7 +314,7 @@ async function withdrawPokemon(id, int, Game) {
     const pokemon = Game.profile.storage[page][index];
     Game.profile.team.push(pokemon);
     Game.profile.storage[page].splice(index, 1);
-    await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name)} to the team.`, ephemeral: true });
+    await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to the team.`, ephemeral: true });
     return Game;
   }
 }
@@ -327,13 +327,13 @@ async function depositPokemon(id, int, Game) {
   for(const [key, value] of Object.entries(Game.profile.storage)) {
     if(value.length < 50) {
       value.push(pokemon);
-      return await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name)} to Storage Page ${key}.`, ephemeral: true });
+      return await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`, ephemeral: true });
     }
   }
 }
 
 function isShinyPokemon() {
-  const randomNumber = getRandomNumber(2)
+  const randomNumber = getRandomNumber(4096)
 
   return randomNumber <= 1
 }

@@ -24,6 +24,7 @@ module.exports = {
     //Once Profile Decided
     let Game; // new GameMap()
     let name; // Save name for creating
+    let starterPokemons; // Pokemons from starter selection
 
     //Collector
     collector.on("collect", async (i) => {
@@ -63,7 +64,9 @@ module.exports = {
         if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });
 
         //Show new embed with starter pokemons (function like save selection generation)
-        return await reply.edit(generateStarterSelection());
+        const res = generateStarterSelection()
+        starterPokemons = res.pokemons
+        return await reply.edit(res.message);
       }
 
       //Handle profile deletion
@@ -80,7 +83,7 @@ module.exports = {
 
       //Generate profile and update message
       if (["starter0", "starter1", "starter2"].includes(id)) {
-        const starterPokemon = getStarterPokemon(id.replace("starter", ""));
+        const starterPokemon = starterPokemons[id.replace("starter", "")]
 
         Game = new GameMap();
         await createProfile(interaction, name, Game, starterPokemon);

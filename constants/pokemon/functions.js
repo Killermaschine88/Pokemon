@@ -5,6 +5,7 @@ const { getRandomNumber, emojiStringToId, titleCase } = require("../util/functio
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 const { client } = require("../../index");
 const fs = require("fs");
+const pokemon = require("../../commands/interaction/pokemon");
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {
@@ -147,27 +148,30 @@ function generateProfileSelection(list) {
 }
 
 function getStarterPokemon(id) { //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
-  const starters = ["TURTWIG", "CHIMCHAR", "PIPLUP"];
-  const pokemon = pokemonList[starters[id]]
+  const starterPokemon = pokemonList[id]
+  
   if(isShinyPokemon()) {
-    pokemon.isShiny = true;
+    starterPokemon.isShiny = true;
   }
 
-  return pokemonList[starters[id]];
+  return starterPokemon;
 }
 
 function generateStarterSelection() { //FIXME: add shiny odds + emoji rendering here ✨
   //Embed
+  const turtwigStarter = getStarterPokemon("TURTWIG")
+  const chimcharStarter = getStarterPokemon("CHIMCHAR")
+  const piplupStarter = getStarterPokemon("PIPLUP")
   const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
-    .addField(`${getEmoji("TURTWIG")} Turtwig`, "**Type:** Grass", true)
-    .addField(`${getEmoji("CHIMCHAR")} Chimchar`, "**Type:** Fire", true)
-    .addField(`${getEmoji("PIPLUP")} Piplup`, "**Type:** Water", true);
+    .addField(`${getPokemonString(turtwigStarter)}`, "**Type:** Grass", true)
+    .addField(`${getPokemonString(chimcharStarter)}`, "**Type:** Fire", true)
+    .addField(`${getPokemonString(piplupStarter)}`, "**Type:** Water", true);
 
   //Rows
-  const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG")), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR")), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP")))];
+  const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG", turtwigStarter.isShiny)), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR", chimcharStarter.isShiny)), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP", piplupStarter.isShiny)))];
 
-  return { embeds: [embed], components: rows };
+  return { message: { embeds: [embed], components: rows }, pokemons: [turtwigStarter, chimcharStarter, piplupStarter]};
 }
 
 function generateMenu() {
@@ -329,7 +333,7 @@ async function depositPokemon(id, int, Game) {
 }
 
 function isShinyPokemon() {
-  const randomNumber = getRandomNumber(4096)
+  const randomNumber = getRandomNumber(2)
 
   return randomNumber <= 1
 }

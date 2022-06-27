@@ -12,8 +12,6 @@ function getEmoji(name, shiny = false, way = "down") {
     else return emojis[name];
   }
 
-  //emojis = JSON.parse(fs.readFileSync(__dirname + "/../JSON/emojiList.json"));
-
   name = name.toUpperCase();
 
   if (!emojis[name]) {
@@ -125,7 +123,7 @@ function generateProfileSelection(list) {
   const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
     for (const profile of list) {
-      embed.addField(`${profile.profile.name}`, `Starter: ${profile.profile.starterPokemon} ${getEmoji(profile.profile.starterPokemon)}\nPokemon Dollars: **${profile.profile.pokemonDollars}**\nCreated: ${profile.profile.created ? `<t:${profile.profile.created}>` : "Unknown"}`, true);
+      embed.addField(`${profile.profile.name}`, `Starter: ${getPokemonString(profile.profile.starterPokemon)}\nPokemon Dollars: **${profile.profile.pokemonDollars}**\nCreated: ${profile.profile.created ? `<t:${profile.profile.created}>` : "Unknown"}`, true);
     }
   } else {
     embed.setDescription("No Profiles found, please create a new one.");
@@ -148,13 +146,17 @@ function generateProfileSelection(list) {
   return { embeds: [embed], components: [row] };
 }
 
-function getStarterPokemon(id) {
+function getStarterPokemon(id) { //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
   const starters = ["TURTWIG", "CHIMCHAR", "PIPLUP"];
+  const pokemon = pokemonList[starters[id]]
+  if(isShinyPokemon()) {
+    pokemon.isShiny = true;
+  }
 
   return pokemonList[starters[id]];
 }
 
-function generateStarterSelection() {
+function generateStarterSelection() { //FIXME: add shiny odds + emoji rendering here ✨
   //Embed
   const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
@@ -172,10 +174,10 @@ function generateMenu() {
   const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
   const options = [
     { label: "Back to Game", emoji: "977989090714714183", value: "movement" },
-    { label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
+    //{ label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
     { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemonTeam" },
     { label: "Pokemon Storage", emoji: "829731463804485653", value: "pokemonStorage" },
-    { label: "Bag", emoji: "989794285002047518", value: "bag" },
+    //{ label: "Bag", emoji: "989794285002047518", value: "bag" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
     { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" },
   ];
@@ -236,12 +238,11 @@ function generateStorageView() {
   const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
   const options = [
     { label: "Back to Menu", emoji: "977989090714714183", value: "backToMenu" },
-    { label: "View Stored Pokemon", emoji: "", value: "displayStorageRows" },
-    //{ label: "Store Pokemon", emoji: "", value: "storePokemonRow },
+    { label: "View Stored Pokemon", emoji: "829731463804485653", value: "displayStorageRows" },
   ];
 
   for (const option of options) {
-    rows[0].components[0].options.push({ label: option.label, value: option.value }); //emoji: { id: option.emoji } });
+    rows[0].components[0].options.push({ label: option.label, value: option.value, emoji: { id: option.emoji } });
   }
 
   return { components: rows };
@@ -327,4 +328,18 @@ async function depositPokemon(id, int, Game) {
   }
 }
 
-module.exports = { depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+function isShinyPokemon() {
+  const randomNumber = getRandomNumber(4096)
+
+  return randomNumber <= 1
+}
+
+function getPokemonString(pokemon) {
+  let str = ""
+  if(pokemon.isShiny) str += "✨ "
+  str += `${pokemon.name} `
+  str += getEmoji(pokemon.id, pokemon.isShiny)
+  return str
+}
+
+module.exports = { getPokemonString, isShinyPokemon, depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

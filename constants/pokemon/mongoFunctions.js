@@ -8,13 +8,13 @@ async function createProfile(interaction, name, Game, starterPokemon) {
             // If adding anything here dont forget to add at constants/map.js getProfileForSave() Function
             name: name, // Name of the profile
             created: Math.floor(Date.now() / 1000), // Creation Date
-            starterPokemon: starterPokemon.name, // Name of the starter Pokemon
+            starterPokemon: starterPokemon, // Name of the starter Pokemon
             pokemonDollars: 0, // Amount of Money
             team: [starterPokemon], // Currently selected team
             bag: [], // Bag of Items (Pokeballs, etc)
             badges: [], // Gym Badges
             pokedex: [], // List of found Pokemon
-            storage: { 0: [starterPokemon], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 19: [], 20: [], 21: [], 22: [], 23: [] }, // Storage for exces pokemon
+            storage: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 17: [], 18: [], 19: [], 20: [], 21: [], 22: [], 23: [] }, // Storage for exces pokemon
           },
           game: Game, // Map Data
         },

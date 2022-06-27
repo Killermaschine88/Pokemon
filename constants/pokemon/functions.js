@@ -125,7 +125,7 @@ function generateProfileSelection(list) {
   const embed = new MessageEmbed().setTitle("Save Selection").setDescription("Choose a save you want to play.");
   if (list.length > 0) {
     for (const profile of list) {
-      embed.addField(`${profile.name}`, `Starter: ${profile.starterPokemon} ${getEmoji(profile.starterPokemon)}\nPokemon Dollars: **${profile.pokemonDollars}**\nCreated: ${profile.created ? `<t:${profile.created}>` : "Unknown"}`, true);
+      embed.addField(`${profile.profile.name}`, `Starter: ${profile.profile.starterPokemon} ${getEmoji(profile.profile.starterPokemon)}\nPokemon Dollars: **${profile.profile.pokemonDollars}**\nCreated: ${profile.profile.created ? `<t:${profile.profile.created}>` : "Unknown"}`, true);
     }
   } else {
     embed.setDescription("No Profiles found, please create a new one.");
@@ -136,7 +136,7 @@ function generateProfileSelection(list) {
   if (list.length > 0) {
     let index = 0;
     for (const profile of list) {
-      row.components.push(new MessageButton().setCustomId(`profile_${index}`).setLabel(`Load: ${profile.name}`).setStyle("SECONDARY"));
+      row.components.push(new MessageButton().setCustomId(`profile_${index}`).setLabel(`Load: ${profile.profile.name}`).setStyle("SECONDARY"));
       index++;
     }
     if (row.components.length < 3) row.components.push(new MessageButton().setCustomId("newProfile").setLabel("Create new Profile").setStyle("SUCCESS"));
@@ -248,66 +248,83 @@ function generateStorageView() {
 }
 
 async function getStorageRow(Game, int, id) {
-  //INWORK
-  if(id === "displayStorageRows") {
+  if (id === "displayStorageRows") {
     const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Storage Page").setMinValues(1).setMaxValues(1).setCustomId("storageRowSelect"))];
     const storage = Game.profile.storage;
-    for(const [key, value] of Object.entries(storage)) {
-      if(value.length === 0) continue;
+    rows[0].components[0].options.push({ label: "Back to Menu", emoji: { id:"977989090714714183" }, value: "backToMenu" })
+    for (const [key, value] of Object.entries(storage)) {
+      if (value.length === 0) continue;
 
       rows[0].components[0].options.push({ label: `Storage Page ${key}`, value: `storagePage_${key}` });
     }
-    if(rows[0].components[0].options.length === 0) return await int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
+    if (rows[0].components[0].options.length === 1) return await int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
     return await Game.message.edit({ components: rows });
   }
 
-  if(id.startsWith("storagePage_")) {
+  if (id.startsWith("storagePage_")) {
     const page = id.split("_")[1];
-    const storage = Game.profile.storage[page]
-    let rowAmount = 1
-    let pokemonAmount = 0
-    const rows = [int.message.components[0], new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`))]
+    const storage = Game.profile.storage[page];
+    let rowAmount = 1;
+    let pokemonAmount = 0;
+    const rows = [int.message.components[0], new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`))];
 
-    for(const pokemon of storage) {
-      const options = rows[rowAmount].components[0].options
-      if(options.length === 24) {
+    for (const pokemon of storage) {
+      const options = rows[rowAmount].components[0].options;
+      if (options.length === 24) {
         rowAmount++;
-        rows.push(new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`)))
+        rows.push(new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`)));
       }
-      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id)) }})
-      pokemonAmount++
+      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id)) } });
+      pokemonAmount++;
     }
 
-    return await Game.message.edit({ components: rows })
+    return await Game.message.edit({ components: rows });
   }
 }
 
-async function displayPokemon(int, pokemon, withdrawAble=false, id) {
+async function displayPokemon(int, pokemon, state, id) {
   const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getEmoji(pokemon.name)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
-    pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
-    pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
+  pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
+  pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
 
-    if(withdrawAble) {
-      const split = id.split("_")
-      const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
-      return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
-    } else {
-      return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
-    }
+  if (state === "withdraw") {
+    const split = id.split("_");
+    const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
+    return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
+  } else if(state === "deposit") {
+    const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER"))];
+    return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
+  } else {
+    return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+  }
 }
 
 async function withdrawPokemon(id, int, Game) {
-  if(Game.profile.team.length === 6) {
+  if (Game.profile.team.length === 6) {
     await int.followUp({ content: "You already have 6 Pokemon in your team, store one first so you have space in your team.", ephemeral: true });
   } else {
-  const split = id.split("_")
-  const page = split[1]
-  const index = split[2];
-  const pokemon = Game.profile.storage[page][index]
-  Game.profile.team.push(pokemon)
-  Game.profile.storage[page].splice(index, 1)
-  return Game
+    const split = id.split("_");
+    const page = split[1];
+    const index = split[2];
+    const pokemon = Game.profile.storage[page][index];
+    Game.profile.team.push(pokemon);
+    Game.profile.storage[page].splice(index, 1);
+    await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name)} to the team.`, ephemeral: true });
+    return Game;
   }
 }
 
-module.exports = { withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+async function depositPokemon(id, int, Game) {
+  if(Game.profile.team.length === 1) return int.followUp({ content: `This action would remove your last pokemon from the team which will make you vulnerable to trainers.`, ephemeral: true });
+  const index = id.split("_")[1];
+  const pokemon = Game.profile.team[index];
+  Game.profile.team.splice(index, 1);
+  for(const [key, value] of Object.entries(Game.profile.storage)) {
+    if(value.length < 50) {
+      value.push(pokemon);
+      return await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name)} to Storage Page ${key}.`, ephemeral: true });
+    }
+  }
+}
+
+module.exports = { depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

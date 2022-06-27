@@ -13,7 +13,7 @@ module.exports = {
         await uploadEmoji(message.content, client);
       } catch (err) {
         await message.channel.send(`Something went wrong while uploading \`${message.content}\``);
-        console.log(err);
+        log(err, "ERROR");
       }
     }
 

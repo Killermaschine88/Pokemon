@@ -1,21 +1,11 @@
 const { displayPokemon, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, returnPokemonStats, getPokemonLevel, returnPokemonMoves, getStorageRow } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
-const { getCurrentProfile } = require("./mongoFunctions");
 
 class GameMap {
   constructor(existingSave) {
-    console.log(existingSave)
     if (existingSave) {
-      this.name = existingSave.name;
-      this.created = existingSave.created;
-      this.team = existingSave.team;
-      this.bag = existingSave.bag;
-      this.badges = existingSave.badges;
-      this.pokedex = existingSave.pokedex;
-      this.storage = existingSave.storage;
-      this.starterPokemon = existingSave.starterPokemon;
-      this.pokemonDollars = existingSave.pokemonDollars;
+      this.profile = existingSave.profile;
       this.map = existingSave.game.map;
       this.pos = existingSave.game.pos;
       this.lastMove = existingSave.game.lastMove;
@@ -108,9 +98,6 @@ class GameMap {
   setVariables(interaction, collector) {
     this.client = interaction.client;
     this.user = interaction.user;
-    getCurrentProfile(this.client, this.user, this.profileIndex).then((data) => {
-      this.profile = data;
-    });
     this.collector = collector;
     return this;
   }
@@ -145,8 +132,7 @@ class GameMap {
   getProfileForSave() {
     let obj = {};
     for (const [key, value] of Object.entries(this)) {
-      if (["name", "created", "starterPokemon", "pokemonDollars", "team", "bag", "badges", "pokedex", "storage"].includes(key)) obj[key] = value;
-      if(key === "profile") console.log({key, value})
+      if (["profile"].includes(key)) obj[key] = value;
     }
 
     obj["game"] = {
@@ -162,7 +148,7 @@ class GameMap {
 
   async getPokemonTeamInfo(int, id) {
     const pokemon = this.profile.team[id];
-    return await displayPokemon(int, pokemon)
+    return await displayPokemon(int, pokemon, "deposit", id);
   }
 
   async getStorageRow(int, id) {
@@ -170,9 +156,9 @@ class GameMap {
   }
 
   async showStoragePokemon(int, id) {
-    const split = id.split("_")
-    const pokemon = this.profile.storage[split[1]][split[2]]
-    return await displayPokemon(int, pokemon, true, id)
+    const split = id.split("_");
+    const pokemon = this.profile.storage[split[1]][split[2]];
+    return await displayPokemon(int, pokemon, "withdraw", id);
   }
 
   // Unused atm

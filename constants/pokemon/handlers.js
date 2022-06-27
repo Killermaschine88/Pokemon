@@ -33,8 +33,4 @@ async function menuHandler(interaction, Game) {
   }
 }
 
-async function storageHandler(interaction, id, Game) {
-  //console.log(id);
-}
-
-module.exports = { menuHandler, storageHandler };
+module.exports = { menuHandler };

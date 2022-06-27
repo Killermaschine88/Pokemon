@@ -1,9 +1,9 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants");
-const { generateProfileSelection, getStarterPokemon, generateStarterSelection, withdrawPokemon } = require("../../constants/pokemon/functions");
+const { generateProfileSelection, getStarterPokemon, generateStarterSelection, withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/mongoFunctions");
-const { menuHandler, storageHandler } = require("../../constants/pokemon/handlers");
+const { menuHandler } = require("../../constants/pokemon/handlers");
 const { badName } = require("../../constants/util/functions");
 const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions");
 
@@ -27,7 +27,7 @@ module.exports = {
 
     //Collector
     collector.on("collect", async (i) => {
-      if(i.user.id !== interaction.user.id) return
+      if (i.user.id !== interaction.user.id) return;
       if (!i.isButton() && !i.isModalSubmit() && !i.isSelectMenu()) return;
       const id = i?.values?.[0] || i.customId;
 
@@ -104,14 +104,22 @@ module.exports = {
       }
 
       // Display specified pokemon from storage
-      if(id.startsWith("storagePokemon_")) {
-        return await Game.showStoragePokemon(i, id)
+      if (id.startsWith("storagePokemon_")) {
+        return await Game.showStoragePokemon(i, id);
       }
 
-      if(id.startsWith("withdrawPokemon_")) {
-        i.message.components[0].components[0].disabled = true
-        await i.editReply({ components: i.message.components })
-        return await withdrawPokemon(id, i, Game)
+      // Withdraw Pokemon from Storage
+      if (id.startsWith("withdrawPokemon_")) {
+        i.message.components[0].components[0].disabled = true;
+        await i.editReply({ components: i.message.components });
+        return await withdrawPokemon(id, i, Game);
+      }
+
+      // Deposit pokemon to storage
+      if(id.startsWith("depositPokemon_")) {
+        i.message.components[0].components[0].disabled = true;
+        await i.editReply({ components: i.message.components });
+        return await depositPokemon(id, i, Game);
       }
 
       // PC Handler (Depositing and Withdrawing Pokemon) // INWORK
@@ -131,9 +139,7 @@ module.exports = {
     });
 
     collector.on("end", async (__, reason) => {
-      await Game.getMessage()
-        .edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] })
-        .catch((err) => err);
+      await reply.edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
 
       if (Game?.isStarted()) {
         return await saveProfile(interaction, Game);

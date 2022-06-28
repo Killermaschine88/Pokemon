@@ -65,7 +65,7 @@ function generateMap({ width, height }) {
   let y = 0;
 
   while (mapGenerating) {
-    const randomNum = getRandomNumber(100, false);
+    const randomNum = getRandomNumber(0, 100, false);
 
     if (randomNum <= 1.5) {
       //Grass Chance
@@ -109,7 +109,7 @@ function getFieldSize() {
 }
 
 function pokemonFound() {
-  const rn = getRandomNumber(100);
+  const rn = getRandomNumber(0, 100);
   return rn <= 5;
 }
 
@@ -320,7 +320,7 @@ async function depositPokemon(id, int, Game) {
 }
 
 function isShinyPokemon() {
-  const randomNumber = getRandomNumber(4096)
+  const randomNumber = getRandomNumber(0, 4096)
 
   return randomNumber <= 1
 }

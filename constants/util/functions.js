@@ -1,5 +1,5 @@
-function getRandomNumber(max, round = true) {
-  const num = Math.random() * max + 1;
+function getRandomNumber(min, max, round = true) {
+  const num = Math.floor(Math.random() * (max - min + 1)) + min;
   return round ? Math.floor(num) : Number(num.toFixed(2));
 }
 

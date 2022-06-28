@@ -1,6 +1,6 @@
 const { GameMap } = require("../../constants/pokemon/map");
 const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants");
-const { generateProfileSelection, getStarterPokemon, generateStarterSelection, withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions");
+const { generateProfileSelection, generateStarterSelection, withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/mongoFunctions");
 const { menuHandler } = require("../../constants/pokemon/handlers");

@@ -33,4 +33,8 @@ async function menuHandler(interaction, Game) {
   }
 }
 
-module.exports = { menuHandler };
+async function encounterHandler(Game, enemyPokemon) {
+  //
+}
+
+module.exports = { menuHandler, encounterHandler };

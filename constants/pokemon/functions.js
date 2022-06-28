@@ -115,6 +115,7 @@ function pokemonFound() {
 function generateRandomPokemon() {
   let pokemonNames = Object.keys(pokemonList);
   const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
+  if(isShinyPokemon()) pokemon.isShiny = true;
   return pokemonList[pokemon];
 }
 
@@ -147,7 +148,6 @@ function generateProfileSelection(list) {
 }
 
 function getStarterPokemon(id) {
-  //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
   const starterPokemon = pokemonList[id];
 
   if (isShinyPokemon()) {
@@ -158,7 +158,6 @@ function getStarterPokemon(id) {
 }
 
 function generateStarterSelection() {
-  //FIXME: add shiny odds + emoji rendering here ✨
   //Embed
   const turtwigStarter = getStarterPokemon("TURTWIG");
   const chimcharStarter = getStarterPokemon("CHIMCHAR");
@@ -321,9 +320,7 @@ async function depositPokemon(id, int, Game) {
 }
 
 function isShinyPokemon() {
-  const randomNumber = getRandomNumber(0, 4096);
-
-  return randomNumber <= 1;
+  return getRandomNumber(0, 4096) <= 1;
 }
 
 function getPokemonString(pokemon) {

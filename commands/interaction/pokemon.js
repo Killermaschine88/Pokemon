@@ -3,7 +3,7 @@ const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon
 const { generateProfileSelection, generateStarterSelection, withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/mongoFunctions");
-const { menuHandler } = require("../../constants/pokemon/handlers");
+const { menuHandler, encounterHandler } = require("../../constants/pokemon/handlers");
 const { badName } = require("../../constants/util/functions");
 const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions");
 
@@ -143,7 +143,7 @@ module.exports = {
       const res = Game.pokemonSpawned();
       if (res.spawned) {
         const { pokemon: enemyPokemon } = res
-        console.log(enemyPokemon.name)
+        return encounterHandler(Game, enemyPokemon)
       }
     });
 

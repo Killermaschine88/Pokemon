@@ -37,6 +37,8 @@ module.exports = {
       }
       collector.resetTimer(); //Reset timer on input
 
+      //PROFILE_SECTION
+
       //Profile Selection
       if (id.startsWith("profile_")) {
         //Handles Loading Profile
@@ -64,8 +66,8 @@ module.exports = {
         if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });
 
         //Show new embed with starter pokemons (function like save selection generation)
-        const res = generateStarterSelection()
-        starterPokemons = res.pokemons
+        const res = generateStarterSelection();
+        starterPokemons = res.pokemons;
         return reply.edit(res.message);
       }
 
@@ -83,13 +85,15 @@ module.exports = {
 
       //Generate profile and update message
       if (["starter0", "starter1", "starter2"].includes(id)) {
-        const starterPokemon = starterPokemons[id.replace("starter", "")]
+        const starterPokemon = starterPokemons[id.replace("starter", "")];
 
         Game = new GameMap();
         await createProfile(interaction, name, Game, starterPokemon);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
         return interaction.editReply(generateProfileSelection(profiles));
       }
+
+      //GAME_SECTION
 
       // Returning components back to walking row
       if (id === "movement") {
@@ -119,7 +123,7 @@ module.exports = {
       }
 
       // Deposit pokemon to storage
-      if(id.startsWith("depositPokemon_")) {
+      if (id.startsWith("depositPokemon_")) {
         i.message.components[0].components[0].disabled = true;
         await i.editReply({ components: i.message.components });
         return depositPokemon(id, i, Game);
@@ -133,6 +137,12 @@ module.exports = {
       //Movement handler
       if (["up", "down", "left", "right"].includes(id)) {
         return Game.movePlayer(id).updateMessage();
+      }
+
+      // COMBAT_SECTION
+      const res = Game.pokemonSpawned()
+      if(res.spawned) {
+        console.log(res.pokemon)
       }
     });
 

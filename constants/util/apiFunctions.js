@@ -23,8 +23,7 @@ async function returnMoves(moveList) {
   // Move Information: https://pokeapi.co/api/v2/move/moveName
   let pokemonMoves = [];
 
-  const filteredList = moveList.filter((move) => move.version_group_details[0].version_group.name === "diamond-pearl");
-  let firstAttack = true;
+  const filteredList = moveList; //.filter((move) => move.version_group_details[0].version_group.name === "diamond-pearl");
 
   for (const move of filteredList) {
     // Ignoring moves that arent from level up
@@ -35,14 +34,18 @@ async function returnMoves(moveList) {
 
     //Pushing to array
     if (moveData.damage_class.name === "status" && moveData.meta.healing > 0) {
-      pokemonMoves.push({ selected: firstAttack ? true : false, name: titleCase(move.move.name.replaceAll("-", " ")), id: move.move.name, levelLearnedAt: move.version_group_details[0].level_learned_at, data: { type: moveData.damage_class.name, healing: moveData.meta.healing, effect: moveData.effect_entries[0].short_effect.replaceAll("$effect_chance% ", "") } });
+      if (!moveData) pokemonMoves.push({ selected: false, name: titleCase(move.move.name.replaceAll("-", " ")), id: move.move.name, levelLearnedAt: move.version_group_details[0].level_learned_at, data: { type: moveData.damage_class.name, healing: moveData.meta.healing, effect: moveData.effect_entries.length >= 1 ? moveData.effect_entries[0].short_effect.replaceAll("$effect_chance% ", "") : null } });
       firstAttack = false;
     } else if (["physical", "special"].includes(moveData.damage_class.name)) {
-      pokemonMoves.push({ selected: firstAttack ? true : false, name: titleCase(move.move.name.replaceAll("-", " ")), id: move.move.name, levelLearnedAt: move.version_group_details[0].level_learned_at, data: { accuracy: moveData.accuracy, type: moveData.damage_class.name, power: moveData.power, effect: moveData.effect_entries[0].short_effect.replaceAll("$effect_chance% ", "") } });
+      pokemonMoves.push({ selected: false, name: titleCase(move.move.name.replaceAll("-", " ")), id: move.move.name, levelLearnedAt: move.version_group_details[0].level_learned_at, data: { accuracy: moveData.accuracy, type: moveData.damage_class.name, power: moveData.power, effect: moveData.effect_entries.length >= 1 ? moveData.effect_entries[0].short_effect.replaceAll("$effect_chance% ", "") : null } });
       firstAttack = false;
     }
   }
-  return pokemonMoves.sort((a, b) => a.levelLearnedAt - b.levelLearnedAt);
+  let sorted = pokemonMoves.sort((a, b) => a.levelLearnedAt - b.levelLearnedAt);
+  if (sorted[0]) {
+    sorted[0].selected = true;
+  }
+  return sorted;
 }
 
 module.exports = { returnTypes, returnStats, returnMoves };

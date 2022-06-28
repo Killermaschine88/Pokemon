@@ -109,8 +109,7 @@ function getFieldSize() {
 }
 
 function pokemonFound() {
-  const rn = getRandomNumber(0, 100);
-  return rn <= 5;
+  return getRandomNumber(0, 100)  <= 5;
 }
 
 function generateRandomPokemon() {
@@ -147,21 +146,23 @@ function generateProfileSelection(list) {
   return { embeds: [embed], components: [row] };
 }
 
-function getStarterPokemon(id) { //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
-  const starterPokemon = pokemonList[id]
+function getStarterPokemon(id) {
+  //FIXME: change to return starter pokemon choose and save if it is shiny or not from generateStarterSelection function
+  const starterPokemon = pokemonList[id];
 
-  if(isShinyPokemon()) {
+  if (isShinyPokemon()) {
     starterPokemon.isShiny = true;
   }
 
   return starterPokemon;
 }
 
-function generateStarterSelection() { //FIXME: add shiny odds + emoji rendering here ✨
+function generateStarterSelection() {
+  //FIXME: add shiny odds + emoji rendering here ✨
   //Embed
-  const turtwigStarter = getStarterPokemon("TURTWIG")
-  const chimcharStarter = getStarterPokemon("CHIMCHAR")
-  const piplupStarter = getStarterPokemon("PIPLUP")
+  const turtwigStarter = getStarterPokemon("TURTWIG");
+  const chimcharStarter = getStarterPokemon("CHIMCHAR");
+  const piplupStarter = getStarterPokemon("PIPLUP");
   const embed = new MessageEmbed().setTitle("Choose your Starter Pokemon");
   embed
     .addField(`${getPokemonString(turtwigStarter)}`, "**Type:** Grass", true)
@@ -171,7 +172,7 @@ function generateStarterSelection() { //FIXME: add shiny odds + emoji rendering 
   //Rows
   const rows = [new MessageActionRow().addComponents(new MessageButton().setCustomId("starter0").setLabel("Turtwig").setStyle("SECONDARY").setEmoji(getEmoji("TURTWIG", turtwigStarter.isShiny)), new MessageButton().setCustomId("starter1").setLabel("Chimchar").setStyle("SECONDARY").setEmoji(getEmoji("CHIMCHAR", chimcharStarter.isShiny)), new MessageButton().setCustomId("starter2").setLabel("Piplup").setStyle("SECONDARY").setEmoji(getEmoji("PIPLUP", piplupStarter.isShiny)))];
 
-  return { message: { embeds: [embed], components: rows }, pokemons: [turtwigStarter, chimcharStarter, piplupStarter]};
+  return { message: { embeds: [embed], components: rows }, pokemons: [turtwigStarter, chimcharStarter, piplupStarter] };
 }
 
 function generateMenu() {
@@ -242,7 +243,7 @@ async function getStorageRow(Game, int, id) {
   if (id === "pokemonStorage") {
     const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Storage Page").setMinValues(1).setMaxValues(1).setCustomId("storageRowSelect"))];
     const storage = Game.profile.storage;
-    rows[0].components[0].options.push({ label: "Back to Menu", emoji: { id:"977989090714714183" }, value: "backToMenu" })
+    rows[0].components[0].options.push({ label: "Back to Menu", emoji: { id: "977989090714714183" }, value: "backToMenu" });
     for (const [key, value] of Object.entries(storage)) {
       if (value.length === 0) continue;
 
@@ -282,7 +283,7 @@ async function displayPokemon(int, pokemon, state, id) {
     const split = id.split("_");
     const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
     return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
-  } else if(state === "deposit") {
+  } else if (state === "deposit") {
     const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER"))];
     return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
   } else {
@@ -306,31 +307,31 @@ async function withdrawPokemon(id, int, Game) {
 }
 
 async function depositPokemon(id, int, Game) {
-  if(Game.profile.team.length === 1) return int.followUp({ content: `This action would remove your last pokemon from the team which will make you vulnerable to trainers.`, ephemeral: true });
+  if (Game.profile.team.length === 1) return int.followUp({ content: `This action would remove your last pokemon from the team which will make you vulnerable to trainers.`, ephemeral: true });
   const index = id.split("_")[1];
   const pokemon = Game.profile.team[index];
   Game.profile.team.splice(index, 1);
-  for(const [key, value] of Object.entries(Game.profile.storage)) {
-    if(value.length < 50) {
+  for (const [key, value] of Object.entries(Game.profile.storage)) {
+    if (value.length < 50) {
       value.push(pokemon);
-      await Game.message.edit(getPokemonTeamRow(Game.profile.team))
+      await Game.message.edit(getPokemonTeamRow(Game.profile.team));
       return int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`, ephemeral: true });
     }
   }
 }
 
 function isShinyPokemon() {
-  const randomNumber = getRandomNumber(0, 4096)
+  const randomNumber = getRandomNumber(0, 4096);
 
-  return randomNumber <= 1
+  return randomNumber <= 1;
 }
 
 function getPokemonString(pokemon) {
-  let str = ""
-  if(pokemon.isShiny) str += "✨ "
-  str += `${pokemon.name} `
-  str += getEmoji(pokemon.id, pokemon.isShiny)
-  return str
+  let str = "";
+  if (pokemon.isShiny) str += "✨ ";
+  str += `${pokemon.name} `;
+  str += getEmoji(pokemon.id, pokemon.isShiny);
+  return str;
 }
 
 module.exports = { getPokemonString, isShinyPokemon, depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

@@ -114,7 +114,7 @@ class GameMap {
 
   // Getters
   getProfileData(prop) {
-    return prop ? this.profile[prop] : this.profile; //FIXME rework profile shit being wrong whilst saving (figure out how to properly do this shit istg kms)
+    return prop ? this.profile[prop] : this.profile;
   }
 
   getMessage() {
@@ -160,8 +160,6 @@ class GameMap {
     const pokemon = this.profile.storage[split[1]][split[2]];
     return displayPokemon(int, pokemon, "withdraw", id);
   }
-
-  // Unused atm
 }
 
 module.exports = { GameMap };

@@ -45,9 +45,9 @@ async function uploadEmoji(input, client) {
 async function generatePokemonEntry(name) {
   let obj = {};
   let list = JSON.parse(fs.readFileSync(__dirname + "/../JSON/pokemonList.json"));
-  const pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)).data;
-  obj["name"] = titleCase(name);
-  obj["id"] = name.toUpperCase();
+  const pokemon = (await axios.get(`https://pokeapi.co/api/v2/pokemon/${isNaN(name) ? name.toLowerCase() : name}`)).data;
+  obj["name"] = titleCase(pokemon.name);
+  obj["id"] = pokemon.name.toUpperCase();
   obj["pokemonId"] = pokemon.id;
   obj["xp"] = 0;
   obj["heldItem"] = null;
@@ -56,7 +56,7 @@ async function generatePokemonEntry(name) {
   obj["stats"] = returnStats(pokemon.stats);
   obj["moves"] = await returnMoves(pokemon.moves);
 
-  list[name.toUpperCase()] = obj;
+  list[pokemon.name.toUpperCase()] = obj;
 
   fs.writeFileSync(__dirname + "/../JSON/pokemonList.json", JSON.stringify(list));
 }

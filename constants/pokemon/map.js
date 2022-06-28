@@ -80,6 +80,9 @@ class GameMap {
     if (this.newField === 2) {
       if (pokemonFound()) {
         const foundPokemon = generateRandomPokemon();
+        return { spawned: true, pokemon: foundPokemon };
+      } else {
+        return { spawned: false };
       }
     }
   }

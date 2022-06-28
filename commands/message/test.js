@@ -5,7 +5,7 @@ module.exports = {
   devOnly: true,
   alias: [],
   async execute(message, args, client) {
-    if(message.content === "json") {
+    if (message.content === "json") {
       await generatePokemonJSON(message);
     }
   },

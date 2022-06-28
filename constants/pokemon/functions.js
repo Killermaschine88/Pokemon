@@ -109,7 +109,7 @@ function getFieldSize() {
 }
 
 function pokemonFound() {
-  return getRandomNumber(0, 100)  <= 5;
+  return getRandomNumber(0, 10) <= 5;
 }
 
 function generateRandomPokemon() {

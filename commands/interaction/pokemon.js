@@ -136,13 +136,14 @@ module.exports = {
 
       //Movement handler
       if (["up", "down", "left", "right"].includes(id)) {
-        return Game.movePlayer(id).updateMessage();
+        Game.movePlayer(id).updateMessage();
       }
 
       // COMBAT_SECTION
-      const res = Game.pokemonSpawned()
-      if(res.spawned) {
-        console.log(res.pokemon)
+      const res = Game.pokemonSpawned();
+      if (res.spawned) {
+        const { pokemon: enemyPokemon } = res
+        console.log(enemyPokemon.name)
       }
     });
 

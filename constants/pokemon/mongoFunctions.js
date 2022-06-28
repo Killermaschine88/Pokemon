@@ -10,7 +10,7 @@ async function createProfile(interaction, name, Game, starterPokemon) {
             created: Math.floor(Date.now() / 1000), // Creation Date
             starterPokemon: starterPokemon, // Name of the starter Pokemon
             pokemonDollars: 0, // Amount of Money
-            team: [starterPokemon], // Currently selected team
+            team: [starterPokemon, starterPokemon, starterPokemon], // Currently selected team
             bag: [], // Bag of Items (Pokeballs, etc)
             badges: [], // Gym Badges
             pokedex: [], // List of found Pokemon

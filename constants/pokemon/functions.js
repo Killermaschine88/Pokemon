@@ -199,7 +199,7 @@ function getPokemonTeamRow(team) {
   rows[0].components[0].options.push({ label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" } });
 
   for (let i = 0; i < team.length; i++) {
-    rows[0].components[0].options.push({ label: team[i].name, value: `pokemonTeam_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id, team[i].isShiny)) } });
+    rows[0].components[0].options.push({ label: team[i].isShiny ? `✨ ${team[i].name}` : team[i].name, value: `pokemonTeam_${i}`, emoji: { id: emojiStringToId(getEmoji(team[i].id, team[i].isShiny)) } });
   }
 
   return { components: rows };
@@ -238,22 +238,8 @@ function getPokemonLevel(xp) {
   return `${level}`;
 }
 
-function generateStorageView() {
-  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Select an option").setMinValues(1).setMaxValues(1).setCustomId("menuSelect"))];
-  const options = [
-    { label: "Back to Menu", emoji: "977989090714714183", value: "backToMenu" },
-    { label: "View Stored Pokemon", emoji: "829731463804485653", value: "displayStorageRows" },
-  ];
-
-  for (const option of options) {
-    rows[0].components[0].options.push({ label: option.label, value: option.value, emoji: { id: option.emoji } });
-  }
-
-  return { components: rows };
-}
-
 async function getStorageRow(Game, int, id) {
-  if (id === "displayStorageRows") {
+  if (id === "pokemonStorage") {
     const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Storage Page").setMinValues(1).setMaxValues(1).setCustomId("storageRowSelect"))];
     const storage = Game.profile.storage;
     rows[0].components[0].options.push({ label: "Back to Menu", emoji: { id:"977989090714714183" }, value: "backToMenu" })
@@ -262,8 +248,8 @@ async function getStorageRow(Game, int, id) {
 
       rows[0].components[0].options.push({ label: `Storage Page ${key}`, value: `storagePage_${key}` });
     }
-    if (rows[0].components[0].options.length === 1) return await int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
-    return await Game.message.edit({ components: rows });
+    if (rows[0].components[0].options.length === 1) return int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
+    return Game.message.edit({ components: rows });
   }
 
   if (id.startsWith("storagePage_")) {
@@ -279,11 +265,11 @@ async function getStorageRow(Game, int, id) {
         rowAmount++;
         rows.push(new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose your Pokemon to view").setMinValues(1).setMaxValues(1).setCustomId(`storageRow_${rowAmount}`)));
       }
-      options.push({ label: pokemon.name, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id, pokemon.isShiny)) } });
+      options.push({ label: `${pokemon.isShiny ? `✨ ${pokemon.name}` : pokemon.name}`, value: `storagePokemon_${page}_${pokemonAmount}`, emoji: { id: emojiStringToId(getEmoji(pokemon.id, pokemon.isShiny)) } });
       pokemonAmount++;
     }
 
-    return await Game.message.edit({ components: rows });
+    return Game.message.edit({ components: rows });
   }
 }
 
@@ -295,12 +281,12 @@ async function displayPokemon(int, pokemon, state, id) {
   if (state === "withdraw") {
     const split = id.split("_");
     const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
-    return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
+    return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
   } else if(state === "deposit") {
     const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER"))];
-    return await int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
+    return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
   } else {
-    return await int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
+    return int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
   }
 }
 
@@ -315,7 +301,7 @@ async function withdrawPokemon(id, int, Game) {
     Game.profile.team.push(pokemon);
     Game.profile.storage[page].splice(index, 1);
     await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to the team.`, ephemeral: true });
-    return Game;
+    await Game.message.edit(getStorageRow(Game, int, "pokemonStorage"));
   }
 }
 
@@ -327,7 +313,8 @@ async function depositPokemon(id, int, Game) {
   for(const [key, value] of Object.entries(Game.profile.storage)) {
     if(value.length < 50) {
       value.push(pokemon);
-      return await int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`, ephemeral: true });
+      await Game.message.edit(getPokemonTeamRow(Game.profile.team))
+      return int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`, ephemeral: true });
     }
   }
 }
@@ -346,4 +333,4 @@ function getPokemonString(pokemon) {
   return str
 }
 
-module.exports = { getPokemonString, isShinyPokemon, depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, generateStorageView, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };
+module.exports = { getPokemonString, isShinyPokemon, depositPokemon, withdrawPokemon, displayPokemon, getStorageRow, returnPokemonMoves, getPokemonLevel, returnPokemonStats, getPokemonTeamRow, generateMenu, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, generateProfileSelection, getStarterPokemon, generateStarterSelection };

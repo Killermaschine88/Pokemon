@@ -148,17 +148,17 @@ class GameMap {
 
   async getPokemonTeamInfo(int, id) {
     const pokemon = this.profile.team[id];
-    return await displayPokemon(int, pokemon, "deposit", id);
+    return displayPokemon(int, pokemon, "deposit", id);
   }
 
   async getStorageRow(int, id) {
-    return await getStorageRow(this, int, id);
+    return getStorageRow(this, int, id);
   }
 
   async showStoragePokemon(int, id) {
     const split = id.split("_");
     const pokemon = this.profile.storage[split[1]][split[2]];
-    return await displayPokemon(int, pokemon, "withdraw", id);
+    return displayPokemon(int, pokemon, "withdraw", id);
   }
 
   // Unused atm

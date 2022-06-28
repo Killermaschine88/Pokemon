@@ -1,4 +1,4 @@
-const { generateMenu, getPokemonTeamRow, generateStorageView } = require("./functions");
+const { generateMenu, getPokemonTeamRow, getStorageRow } = require("./functions");
 const { saveProfile } = require("./mongoFunctions");
 
 async function menuHandler(interaction, Game) {
@@ -29,7 +29,7 @@ async function menuHandler(interaction, Game) {
 
   if (id === "pokemonStorage") {
     // Openning Menu to choose action for storage
-    return Game.getMessage().edit(generateStorageView());
+    return Game.getMessage().edit(getStorageRow(Game, interaction, id));
   }
 }
 

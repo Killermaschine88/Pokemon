@@ -1,5 +1,7 @@
-const emojis = require("../../JSON/emojiList.json")
-const {client} = require("../../../index")
+const emojis = require("../../JSON/emojiList");
+const { xpList } = require("../../JSON/xpList");
+const { client } = require("../../../index");
+const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {
@@ -85,4 +87,4 @@ function emojiStringToId(emoji) {
   return emoji.split(":")[2].replace(">", "");
 }
 
-module.exports = { getEmoji, getPokemonLevel, getPokemonString, returnPokemonMoves, returnPokemonStats, displayPokemon };
+module.exports = { getEmoji, getPokemonLevel, getPokemonString, returnPokemonMoves, returnPokemonStats, displayPokemon, emojiStringToId };

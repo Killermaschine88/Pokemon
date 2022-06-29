@@ -33,4 +33,4 @@ async function menuHandler(interaction, Game) {
   }
 }
 
-module.exports = { menuHandler }
+module.exports = { menuHandler };

@@ -23,4 +23,4 @@ function getRandomMultiplier() {
 
 //console.log(calculateDamage(pokemonList["CHIMCHAR"], pokemonList["CHIMCHAR"].moves[0].data)) //EXAMPLE USAGE
 
-module.exports = { calculateDamage }
+module.exports = { calculateDamage };

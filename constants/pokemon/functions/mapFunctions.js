@@ -32,4 +32,4 @@ function getOldPositionField(game) {
   else return 1;
 }
 
-module.exports = { getOffset, handleMovement }
+module.exports = { getOffset, handleMovement };

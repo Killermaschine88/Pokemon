@@ -1,7 +1,7 @@
-const {  getStorageRow } = require("../functions/generatorFunctions");
-const { generateRandomPokemon, pokemonFound } = require("../functions/pokemonFunctions")
-const { getOffset, handleMovement } = require("../functions/mapFunctions")
-const { displayPokemon, getEmoji } = require("../functions/utilFunctions")
+const { getStorageRow } = require("../functions/generatorFunctions");
+const { generateRandomPokemon, pokemonFound } = require("../functions/pokemonFunctions");
+const { getOffset, handleMovement } = require("../functions/mapFunctions");
+const { displayPokemon, getEmoji } = require("../functions/utilFunctions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("../constants/discord");
 const { playerMap } = require("../constants/map");
@@ -170,4 +170,4 @@ class GameMap {
   }
 }
 
-module.exports = { GameMap }
+module.exports = { GameMap };

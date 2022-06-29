@@ -89,7 +89,10 @@ async function getStorageRow(Game, int, id) {
 
       rows[0].components[0].options.push({ label: `Storage Page ${key}`, value: `storagePage_${key}` });
     }
-    if (rows[0].components[0].options.length === 1) return int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
+    if (rows[0].components[0].options.length === 1) {
+      int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
+      return Game.message.edit(generateMenu())
+    }
     return Game.message.edit({ components: rows });
   }
 

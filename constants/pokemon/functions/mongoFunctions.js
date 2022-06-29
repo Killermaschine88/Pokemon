@@ -71,7 +71,7 @@ async function deleteProfile(interaction, name) {
 }
 
 async function addPokemonToUser(pokemon, shiny, profileId, userId, client) {
-  let profiles = (await client.mongo.findOne({ _id: userid })).profiles;
+  let profiles = (await client.mongo.findOne({ _id: userId })).profiles;
   
   //Pokemon
   let pokemonEntry = pokemonList[pokemon]
@@ -83,7 +83,7 @@ async function addPokemonToUser(pokemon, shiny, profileId, userId, client) {
     { _id: userId },
     {
       $set: {
-        profiles: newProfiles,
+        profiles: profiles,
       },
     },
     { upsert: true }

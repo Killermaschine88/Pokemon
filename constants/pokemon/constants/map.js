@@ -12,4 +12,4 @@ const playerMap = [
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
 ];
 
-module.exports = { playerMap };
+module.exports = { playerMap }

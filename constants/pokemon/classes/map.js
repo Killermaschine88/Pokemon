@@ -1,7 +1,10 @@
-const { displayPokemon, getEmoji, getOffset, handleMovement, pokemonFound, generateRandomPokemon, getStorageRow } = require("./functions");
+const {  getStorageRow } = require("../functions/generatorFunctions");
+const { generateRandomPokemon, pokemonFound } = require("../functions/pokemonFunctions")
+const { getOffset, handleMovement } = require("../functions/mapFunctions")
+const { displayPokemon, getEmoji } = require("../functions/utilFunctions")
 const { MessageEmbed } = require("discord.js");
-const { rows } = require("./constants");
-const { playerMap } = require("./mapFile");
+const { rows } = require("../constants/discord");
+const { playerMap } = require("../constants/map");
 
 class GameMap {
   constructor(existingSave) {
@@ -22,7 +25,7 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
-      console.log(this.pos)
+      console.log(this.pos);
     }
   }
 
@@ -48,7 +51,7 @@ class GameMap {
     // Place Player
     const x = (map[0].length / 2).toFixed() - 1;
     const y = (map.length / 2).toFixed() - 1;
-    map[y][x] = 0 // Player
+    map[y][x] = 0; // Player
 
     // Render Map
     for (const row of map) {
@@ -167,4 +170,4 @@ class GameMap {
   }
 }
 
-module.exports = { GameMap };
+module.exports = { GameMap }

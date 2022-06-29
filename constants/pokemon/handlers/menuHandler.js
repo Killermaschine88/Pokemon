@@ -1,5 +1,5 @@
-const { generateMenu, getPokemonTeamRow, getStorageRow } = require("./functions");
-const { saveProfile } = require("./mongoFunctions");
+const { generateMenu, getPokemonTeamRow, getStorageRow } = require("../functions/generatorFunctions");
+const { saveProfile } = require("../functions/mongoFunctions");
 
 async function menuHandler(interaction, Game) {
   const id = interaction?.values?.[0] || interaction.customId;
@@ -33,8 +33,4 @@ async function menuHandler(interaction, Game) {
   }
 }
 
-async function encounterHandler(Game, enemyPokemon) {
-  console.log(enemyPokemon.name)
-}
-
-module.exports = { menuHandler, encounterHandler };
+module.exports = { menuHandler }

@@ -68,4 +68,4 @@ async function deleteProfile(interaction, name) {
   );
 }
 
-module.exports = { createProfile, saveProfile, hasProfileWithName, deleteProfile };
+module.exports = { createProfile, deleteProfile, hasProfileWithName, saveProfile}

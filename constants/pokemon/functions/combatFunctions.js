@@ -1,5 +1,5 @@
-const { getRandomNumber } = require("../util/functions");
-const { getPokemonLevel } = require("./functions");
+const { getRandomNumber } = require("../../util/functions");
+const { getPokemonLevel } = require("../functions/utilFunctions");
 
 function calculateDamage(pokemon, move) {
   const damage = (((2 * getPokemonLevel(pokemon.xp)) / 5 + 2 * move.power * getDefenseStat(pokemon, move)) / 50 + 2) * 1 * 0.25 * 1 * getCriticalMultiplier(pokemon) * getRandomMultiplier() * 1;
@@ -23,4 +23,4 @@ function getRandomMultiplier() {
 
 //console.log(calculateDamage(pokemonList["CHIMCHAR"], pokemonList["CHIMCHAR"].moves[0].data)) //EXAMPLE USAGE
 
-module.exports = { calculateDamage };
+module.exports = { calculateDamage }

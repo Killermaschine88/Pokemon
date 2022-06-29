@@ -1,11 +1,13 @@
-const { GameMap } = require("../../constants/pokemon/map");
-const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants");
-const { generateProfileSelection, generateStarterSelection, withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions");
+const { GameMap } = require("../../constants/pokemon/classes/map");
+const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants/discord");
+const { generateProfileSelection, generateStarterSelection } = require("../../constants/pokemon/functions/generatorFunctions");
+const { withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions/storageFunctions");
 const { InteractionCollector } = require("discord.js");
-const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/mongoFunctions");
-const { menuHandler, encounterHandler } = require("../../constants/pokemon/handlers");
+const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/functions/mongoFunctions");
+const { encounterHandler } = require("../../constants/pokemon/handlers/encounterHandler");
+const { menuHandler } = require("../../constants/pokemon/handlers/menuHandler");
 const { badName } = require("../../constants/util/functions");
-const { hasProfileWithName } = require("../../constants/pokemon/mongoFunctions");
+const { hasProfileWithName } = require("../../constants/pokemon/functions/mongoFunctions");
 
 module.exports = {
   name: "pokemon",

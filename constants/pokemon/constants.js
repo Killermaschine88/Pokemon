@@ -15,4 +15,5 @@ const deleteProfileModal = new Modal()
   .setTitle("Profile Name")
   .addComponents(new MessageActionRow().addComponents(new TextInputComponent().setCustomId("name").setLabel("Profile Name to delete").setStyle("SHORT").setMinLength(5).setMaxLength(25)));
 
-module.exports = { rows, newProfileModal, deleteProfileModal };
+const ignoredPokemon = ["ARTICUNO", "ZAPDOS", "MOLTRES", "MEWTWO", "MEW", "RAIKOUR", "ENTEI", "SUICUNE", "LUGIA", "HO-OH", "CELEBI", "REGIROCK", "REGICE", "REGISTEEL", "LATIAS", "LATIOS", "KYOGRE", "GROUDON", "RAYQUAZA", "JIRACHI", "DEOXYS", "UXIE", "MESPRIT", "AZELF", "DIALGA", "PALKIA","HEATRAN", "REGIGIGAS", "GIRATINA","CRESSELIA","PHIONE","MANAPHY","DARKRAI", "SHAYMIN", "ARCEUS"]
+module.exports = { rows, newProfileModal, deleteProfileModal, ignoredPokemon };

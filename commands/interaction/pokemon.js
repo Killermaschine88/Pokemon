@@ -141,9 +141,9 @@ module.exports = {
 
       // COMBAT_SECTION
       const res = Game.pokemonSpawned();
-      if (res.spawned) {
-        const { pokemon: enemyPokemon } = res
-        return encounterHandler(Game, enemyPokemon)
+      if (res?.spawned) {
+        const { pokemon: enemyPokemon } = res;
+        return encounterHandler(Game, enemyPokemon);
       }
     });
 

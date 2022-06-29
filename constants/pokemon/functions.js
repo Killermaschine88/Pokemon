@@ -1,16 +1,21 @@
 let emojis = require("../JSON/emojiList");
 const pokemonList = require("../JSON/pokemonList");
 const { xpList } = require("../JSON/xpList");
+const { ignoredPokemon } = require("./constants")
 const { getRandomNumber, emojiStringToId, titleCase } = require("../util/functions");
 const { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } = require("discord.js");
 const { client } = require("../../index");
 const fs = require("fs");
-const pokemon = require("../../commands/interaction/pokemon");
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {
-    if (name === 0) return emojis[name + way];
-    else return emojis[name];
+    if (name === 0) {
+      if (emojis[name + way]) return emojis[name + way];
+      else return emojis["MISSING_TEXTURE"];
+    } else {
+      if (emojis[name]) return emojis[name];
+      else return emojis["MISSING_TEXTURE"];
+    }
   }
 
   name = name.toUpperCase();
@@ -109,13 +114,14 @@ function getFieldSize() {
 }
 
 function pokemonFound() {
-  return getRandomNumber(0, 10) <= 5;
+  return getRandomNumber(0, 10) <= 5; // Change 10 to 100 again later for 5% chance
 }
 
 function generateRandomPokemon() {
   let pokemonNames = Object.keys(pokemonList);
+  pokemonNames = pokemonNames.filter(pokemon => !ignoredPokemon.includes(pokemon))
   const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
-  if(isShinyPokemon()) pokemon.isShiny = true;
+  if (isShinyPokemon()) pokemon.isShiny = true;
   return pokemonList[pokemon];
 }
 

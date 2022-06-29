@@ -34,7 +34,7 @@ async function menuHandler(interaction, Game) {
 }
 
 async function encounterHandler(Game, enemyPokemon) {
-  //
+  console.log(enemyPokemon.name)
 }
 
 module.exports = { menuHandler, encounterHandler };

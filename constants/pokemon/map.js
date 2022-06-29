@@ -1,31 +1,28 @@
-const { displayPokemon, getEmoji, getOffset, handleMovement, generateMap, pokemonFound, generateRandomPokemon, returnPokemonStats, getPokemonLevel, returnPokemonMoves, getStorageRow } = require("./functions");
+const { displayPokemon, getEmoji, getOffset, handleMovement, pokemonFound, generateRandomPokemon, getStorageRow } = require("./functions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("./constants");
+const { playerMap } = require("./mapFile");
 
 class GameMap {
   constructor(existingSave) {
     if (existingSave) {
       this.profile = existingSave.profile;
-      this.map = existingSave.game.map;
+      this.map = playerMap;
       this.pos = existingSave.game.pos;
       this.lastMove = existingSave.game.lastMove;
       this.lastField = existingSave.game.lastField;
       this.newField = existingSave.game.newField;
       this.embed = new MessageEmbed().setDescription(this.renderMap());
     } else {
-      const width = 50;
-      const height = 50;
+      const map = playerMap;
 
-      const map = generateMap({ width, height });
-
-      const x = (width / 2).toFixed() - 1;
-      const y = (height / 2).toFixed() - 1;
-
-      map[y][x] = 0; //Player
+      const x = (playerMap[0].length / 2).toFixed() - 1;
+      const y = (playerMap.length / 2).toFixed() - 1;
 
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
+      console.log(this.pos)
     }
   }
 
@@ -48,6 +45,12 @@ class GameMap {
   renderMap(distance = 5) {
     let str = "";
     let map = this.getView(distance);
+    // Place Player
+    const x = (map[0].length / 2).toFixed() - 1;
+    const y = (map.length / 2).toFixed() - 1;
+    map[y][x] = 0 // Player
+
+    // Render Map
     for (const row of map) {
       for (const index of row) {
         str += getEmoji(index, false, this.lastMove);
@@ -140,7 +143,6 @@ class GameMap {
 
     obj["game"] = {
       // Map itself
-      map: this.map,
       pos: this.pos,
       lastMove: this.lastMove,
       lastField: this.lastField || 1,

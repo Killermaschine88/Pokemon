@@ -67,7 +67,6 @@ class GameMap {
     this.lastMove = id;
     const [x, y] = getOffset(id);
     const returnValue = handleMovement(this, x, y);
-    this.map = returnValue.map;
     this.pos = returnValue.pos;
     this.lastField = returnValue.lastField;
     this.newField = returnValue.newField;

@@ -11,8 +11,6 @@ function handleMovement(game, x, y) {
     game.newField = game.map[game.pos.y + y][game.pos.x + x];
 
     //Moving Player
-    game.map[game.pos.y][game.pos.x] = getOldPositionField(game);
-    game.map[game.pos.y + y][game.pos.x + x] = 0; //Player
     game.pos.y += y;
     game.pos.x += x;
   }
@@ -23,13 +21,6 @@ function canMove(game, x, y) {
   const move = game.map?.[game.pos.y + y]?.[game.pos.x + x];
 
   return ![undefined].includes(move);
-}
-
-function getOldPositionField(game) {
-  if (game.lastField === 1 && game.newField === 2) return 1;
-  else if (game.lastField === 2 && game.newField === 1) return 2;
-  else if (game.lastField === 2 && game.newField === 2) return 2;
-  else return 1;
 }
 
 module.exports = { getOffset, handleMovement };

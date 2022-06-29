@@ -1,3 +1,5 @@
+const pokemonList = require("../../JSON/pokemonList.json")
+
 async function createProfile(interaction, name, Game, starterPokemon) {
   await interaction.client.mongo.updateOne(
     { _id: interaction.user.id },
@@ -68,4 +70,24 @@ async function deleteProfile(interaction, name) {
   );
 }
 
-module.exports = { createProfile, deleteProfile, hasProfileWithName, saveProfile };
+async function addPokemonToUser(pokemon, shiny, profileId, userId, client) {
+  let profiles = (await client.mongo.findOne({ _id: userid })).profiles;
+  
+  //Pokemon
+  let pokemonEntry = pokemonList[pokemon]
+  if(shiny) pokemonEntry.isShiny = true;
+
+  profiles[profileId].profile.storage[10].push(pokemonEntry)
+
+    await client.mongo.updateOne(
+    { _id: userId },
+    {
+      $set: {
+        profiles: newProfiles,
+      },
+    },
+    { upsert: true }
+  );
+}
+
+module.exports = { createProfile, deleteProfile, hasProfileWithName, saveProfile, addPokemonToUser };

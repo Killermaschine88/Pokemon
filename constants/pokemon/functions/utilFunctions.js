@@ -2,6 +2,7 @@ const emojis = require("../../JSON/emojiList");
 const { xpList } = require("../../JSON/xpList");
 const { client } = require("../../../index");
 const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
+const { titleCase } = require("../../util/functions")
 
 function getEmoji(name, shiny = false, way = "down") {
   if (!isNaN(name)) {

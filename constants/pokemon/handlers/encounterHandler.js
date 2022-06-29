@@ -1,5 +1,9 @@
-async function encounterHandler(Game, enemyPokemon) {
-  console.log(enemyPokemon.name);
+async function encounterHandler(Game, pokemon, id) {
+  let enemyPokemon;
+  if(id === "pokemonEncounter") {
+    enemyPokemon = pokemon;
+    // initiate encoutnter
+  }
 }
 
 module.exports = { encounterHandler };

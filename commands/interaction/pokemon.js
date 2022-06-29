@@ -27,6 +27,7 @@ module.exports = {
     let Game; // new GameMap()
     let name; // Save name for creating
     let starterPokemons; // Pokemons from starter selection
+    let enemyPokemon; // Pokemon found at random grass encounter
 
     //Collector
     collector.on("collect", async (i) => {
@@ -144,8 +145,14 @@ module.exports = {
       // COMBAT_SECTION
       const res = Game.pokemonSpawned();
       if (res?.spawned) {
-        const { pokemon: enemyPokemon } = res;
-        return encounterHandler(Game, enemyPokemon);
+        return encounterHandler(Game, res.pokemon, "pokemonEncounter");
+      }
+
+      if([].includes(id)) {
+        const combatResult = await encounterHandler(Game, enemyPokemon, id)
+        if(combatResult.state === "encounterDead") {
+
+        }
       }
     });
 

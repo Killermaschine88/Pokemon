@@ -11,6 +11,7 @@ class GameMap {
   constructor(existingSave) {
     if (existingSave) {
       this.profile = existingSave.profile;
+      this.settings = existingSave.settings;
       this.map = playerMap;
       this.pos = existingSave.game.pos;
       this.lastMove = existingSave.game.lastMove;
@@ -26,6 +27,9 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
+
+      // Settings
+      this.settings.showOtherPlayers = true; // figure if i keep like this
     }
   }
 
@@ -38,7 +42,7 @@ class GameMap {
         if (this.pos.x + x < 0 || !this.map[this.pos.y + y] || !this.map[this.pos.x + x]) {
           newMap[distance + y][distance + x] = 9;
         } else {
-          if(!this?.showOtherPlayers) {
+          if(this?.settings?.showOtherPlayers) {
             const players = Object.values(currentlyPlaying)
             const found = players.find(index => index.pos.x === this.pos.x + x && index.pos.y === this.pos.y + y)
             if(found) {

@@ -5,6 +5,7 @@ const { displayPokemon, getEmoji } = require("../functions/utilFunctions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("../constants/discord");
 const { playerMap } = require("../constants/map");
+global.currentlyPlaying = { "a": { pos: { x: 4, y: 5 }, lastMove: "up", playing: true } } // "userId": { pos: { x, y }, playing: true }
 
 class GameMap {
   constructor(existingSave) {
@@ -25,7 +26,6 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
-      console.log(this.pos);
     }
   }
 
@@ -38,7 +38,17 @@ class GameMap {
         if (this.pos.x + x < 0 || !this.map[this.pos.y + y] || !this.map[this.pos.x + x]) {
           newMap[distance + y][distance + x] = 9;
         } else {
-          newMap[distance + y][distance + x] = this.map[this.pos.y + y][this.pos.x + x];
+          if(!this?.showOtherPlayers) {
+            const players = Object.values(currentlyPlaying)
+            const found = players.find(index => index.pos.x === this.pos.x + x && index.pos.y === this.pos.y + y)
+            if(found) {
+              newMap[distance + y][distance + x] = `0${found.lastMove}`
+            } else {
+              newMap[distance + y][distance + x] = this.map[this.pos.y + y][this.pos.x + x];
+            }
+          } else {
+            newMap[distance + y][distance + x] = this.map[this.pos.y + y][this.pos.x + x];
+          }
         }
       }
     }
@@ -51,12 +61,12 @@ class GameMap {
     // Place Player
     const x = (map[0].length / 2).toFixed() - 1;
     const y = (map.length / 2).toFixed() - 1;
-    map[y][x] = 0; // Player
+    map[y][x] = 0 + this.lastMove || "down"; // Player
 
     // Render Map
     for (const row of map) {
       for (const index of row) {
-        str += getEmoji(index, false, this.lastMove);
+        str += getEmoji(index, false);
       }
       str += "\n";
     }
@@ -70,6 +80,7 @@ class GameMap {
     this.pos = returnValue.pos;
     this.lastField = returnValue.lastField;
     this.newField = returnValue.newField;
+    currentlyPlaying[this.user.id] = { pos: this.pos, lastMove: this.lastMove, playing: true }
     return this;
   }
 

@@ -12,4 +12,8 @@ const playerMap = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
+/**
+ * @idea Have huge map and randomly run a few map generations until i like one maybe
+ */
+
 module.exports = { playerMap };

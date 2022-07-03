@@ -148,10 +148,9 @@ module.exports = {
         return encounterHandler(Game, res.pokemon, "pokemonEncounter");
       }
 
-      if([].includes(id)) {
-        const combatResult = await encounterHandler(Game, enemyPokemon, id)
-        if(combatResult.state === "encounterDead") {
-
+      if ([].includes(id)) {
+        const combatResult = await encounterHandler(Game, enemyPokemon, id);
+        if (combatResult.state === "encounterDead") {
         }
       }
     });
@@ -160,6 +159,7 @@ module.exports = {
       await reply.edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
 
       if (Game?.isStarted()) {
+        currentlyPlaying[interaction.user.id].playing = false;
         return saveProfile(interaction, Game);
       }
     });

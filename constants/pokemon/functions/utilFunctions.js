@@ -2,14 +2,14 @@ const emojis = require("../../JSON/emojiList");
 const { xpList } = require("../../JSON/xpList");
 const { client } = require("../../../index");
 const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
-const { titleCase } = require("../../util/functions")
+const { titleCase } = require("../../util/functions");
 
 function getEmoji(name, shiny = false) {
   if (!isNaN(name.toString().charAt(0))) {
     //if (name === 0) {
-      if (emojis[name]) return emojis[name];
-      else return emojis["MISSING_TEXTURE"];
-   // }
+    if (emojis[name]) return emojis[name];
+    else return emojis["MISSING_TEXTURE"];
+    // }
   }
 
   name = name.toUpperCase();

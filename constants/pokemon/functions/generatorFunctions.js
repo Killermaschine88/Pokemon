@@ -91,7 +91,7 @@ async function getStorageRow(Game, int, id) {
     }
     if (rows[0].components[0].options.length === 1) {
       int.followUp({ content: "All your Storage Pages are empty.", ephemeral: true });
-      return Game.message.edit(generateMenu())
+      return Game.message.edit(generateMenu());
     }
     return Game.message.edit({ components: rows });
   }

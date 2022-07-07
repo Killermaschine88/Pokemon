@@ -27,11 +27,6 @@ class GameMap {
       this.map = map;
       this.pos = { x, y };
       this.lastMove = "down";
-
-      // Settings
-      this.settings = {
-        showOtherPlayers: true, // figure if i keep like this
-      };
     }
   }
 

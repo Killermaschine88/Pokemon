@@ -56,6 +56,7 @@ function generateMenu() {
     { label: "Pokemon Team", emoji: "989792754169167903", value: "pokemonTeam" },
     { label: "Pokemon Storage", emoji: "829731463804485653", value: "pokemonStorage" },
     //{ label: "Bag", emoji: "989794285002047518", value: "bag" },
+    { label: "Settings", emoji: "859388128040976384", value: "settings" },
     { label: "Save", emoji: "989807222051721216", value: "save" },
     { label: "Exit and Save", emoji: "863398571302060032", value: "exitAndSave" },
   ];
@@ -117,4 +118,28 @@ async function getStorageRow(Game, int, id) {
   }
 }
 
-module.exports = { generateProfileSelection, generateStarterSelection, generateMenu, getPokemonTeamRow, getStorageRow };
+function generateEncounterMessage(Game) {
+  const enemy = Game.encounterPokemon;
+  console.log(`found ${enemy.name}`);
+  const embed = new MessageEmbed().setTitle("Pokemon Fight").addField(`${Game.profile.team[0].name}`, "a"); // TODO: add functino to generate the embed and also add team id's to pokemon
+
+  const rows = [];
+
+  return { embeds: [embed], components: rows };
+}
+
+function generateSettingsRow() {
+  const rows = [new MessageActionRow().addComponents(new MessageSelectMenu().setPlaceholder("Choose the Setting to toggle").setMinValues(1).setMaxValues(1).setCustomId("settingsSelect"))];
+  const options = [
+    { label: "Back to Menu", value: "backToMenu", emoji: "977989090714714183" },
+    { label: "Show other players in the Map", value: "showOtherPlayers", emoji: "👪" },
+  ];
+
+  for (const option of options) {
+    rows[0].components[0].options.push({ label: option.label, value: option.value, emoji: isNaN(option.emoji) ? { name: option.emoji } : { id: option.emoji } });
+  }
+
+  return { components: rows };
+}
+
+module.exports = { generateProfileSelection, generateStarterSelection, generateMenu, getPokemonTeamRow, getStorageRow, generateEncounterMessage, generateSettingsRow };

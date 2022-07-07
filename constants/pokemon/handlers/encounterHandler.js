@@ -1,8 +1,12 @@
+const { generateEncounterMessage } = require("../functions/generatorFunctions");
+
 async function encounterHandler(Game, pokemon, id) {
-  let enemyPokemon;
   if (id === "pokemonEncounter") {
-    enemyPokemon = pokemon;
+    // Set enemy pokemon to the found pokemon
+    Game.encounterPokemon = pokemon;
+
     // initiate encoutnter
+    await Game.message.edit(generateEncounterMessage(Game));
   }
 }
 

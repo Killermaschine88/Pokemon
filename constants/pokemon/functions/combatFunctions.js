@@ -2,11 +2,19 @@ const { getRandomNumber } = require("../../util/functions");
 const { getPokemonLevel } = require("../functions/utilFunctions");
 
 function calculateDamage(pokemon, move) {
-  return (((2 * getPokemonLevel(pokemon.xp)) / 5 + 2 * move.power * getDefenseStat(pokemon, move)) / 50 + 2) * 1 * 0.25 * 1 * getCriticalMultiplier(pokemon) * getRandomMultiplier() * 1;
+  return (
+    (((2 * getPokemonLevel(pokemon.xp)) / 5 + 2 * move.power * getDefenseStat(pokemon, move)) / 50 + 2) *
+    1 *
+    0.25 *
+    1 *
+    getCriticalMultiplier(pokemon) *
+    getRandomMultiplier() *
+    1
+  );
 }
 
 function getDefenseStat(pokemon, move) {
-  return move.type === "physical" ? pokemon.stats["defense"] : pokemon.stats["special-defense"];
+  return move.class === "physical" ? pokemon.stats["defense"] : pokemon.stats["special-defense"];
 }
 
 function getCriticalMultiplier(pokemon) {

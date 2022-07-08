@@ -65,16 +65,24 @@ function getPokemonLevel(xp) {
 }
 
 async function displayPokemon(int, pokemon, state, id) {
-  const pokemonEmbed = new MessageEmbed().setTitle(`Team Member info for ${pokemon.name} ${getPokemonString(pokemon)}`).setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
+  const pokemonEmbed = new MessageEmbed()
+    .setTitle(`Team Member info for ${pokemon.name} ${getPokemonString(pokemon)}`)
+    .setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
   pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
   pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
 
   if (state === "withdraw") {
     const split = id.split("_");
-    const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS"))];
+    const rows = [
+      new MessageActionRow().addComponents(
+        new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS")
+      ),
+    ];
     return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
   } else if (state === "deposit") {
-    const rows = [new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER"))];
+    const rows = [
+      new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER")),
+    ];
     return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
   } else {
     return int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
@@ -85,4 +93,46 @@ function emojiStringToId(emoji) {
   return emoji.split(":")[2].replace(">", "");
 }
 
-module.exports = { getEmoji, getPokemonLevel, getPokemonString, returnPokemonMoves, returnPokemonStats, displayPokemon, emojiStringToId };
+function getRandomNature() {
+  // https://bulbapedia.bulbagarden.net/wiki/Nature
+  const natures = [
+    "Hardy",
+    "Lonely",
+    "Brave",
+    "Adamant",
+    "Naughty",
+    "Bold",
+    "Docile",
+    "Relaxed",
+    "Impish",
+    "Lax",
+    "Timid",
+    "Hasty",
+    "Serious",
+    "Jolly",
+    "Naive",
+    "Modest",
+    "Mild",
+    "Quiet",
+    "Bashful",
+    "Rash",
+    "Calm",
+    "Gentle",
+    "Sassy",
+    "Careful",
+    "Quirky",
+  ];
+
+  return natures[Math.floor(Math.random() * natures.length)];
+}
+
+module.exports = {
+  getEmoji,
+  getPokemonLevel,
+  getPokemonString,
+  returnPokemonMoves,
+  returnPokemonStats,
+  displayPokemon,
+  emojiStringToId,
+  getRandomNature,
+};

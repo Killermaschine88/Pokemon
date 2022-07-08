@@ -1,4 +1,4 @@
-const { returnTypes, returnStats, returnMoves } = require("./apiFunctions");
+const { returnTypes, returnStats, returnMoves, returnSprites } = require("./apiFunctions");
 const { titleCase } = require("./functions");
 const sharp = require("sharp");
 const axios = require("axios");
@@ -38,7 +38,11 @@ async function uploadEmoji(input, client) {
   fs.writeFileSync(__dirname + "/../JSON/emojiList.json", JSON.stringify(emojiList, null, 2));
 
   await generatePokemonEntry(name.toLowerCase());
-  client.channels.cache.get("990697701274439740").send(`Created <:${normalEmoji.name}:${normalEmoji.id}> <:${shinyEmoji.name}:${shinyEmoji.id}>, \`<:${normalEmoji.name}:${normalEmoji.id}>\` \`<:${shinyEmoji.name}:${shinyEmoji.id}>\``);
+  client.channels.cache
+    .get("990697701274439740")
+    .send(
+      `Created <:${normalEmoji.name}:${normalEmoji.id}> <:${shinyEmoji.name}:${shinyEmoji.id}>, \`<:${normalEmoji.name}:${normalEmoji.id}>\` \`<:${shinyEmoji.name}:${shinyEmoji.id}>\``
+    );
   return true;
 }
 
@@ -55,6 +59,7 @@ async function generatePokemonEntry(name) {
   obj["types"] = returnTypes(pokemon.types);
   obj["stats"] = returnStats(pokemon.stats);
   obj["moves"] = await returnMoves(pokemon.moves);
+  obj["sprites"] = returnSprites(pokemon.sprites);
 
   list[pokemon.name.toUpperCase()] = obj;
 

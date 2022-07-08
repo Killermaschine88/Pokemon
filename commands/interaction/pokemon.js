@@ -67,7 +67,14 @@ module.exports = {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
-        if (await hasProfileWithName(interaction, name)) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`, ephemeral: true });
+        if (await hasProfileWithName(interaction, name))
+          return (
+            i.deferUpdate().catch((err) => err),
+            interaction.followUp({
+              content: `Can't create another profile with the name \`${name}\` as a profile with that name already exists.`,
+              ephemeral: true,
+            })
+          );
 
         // Show new embed with starter pokemons (function like save selection generation)
         const res = generateStarterSelection();
@@ -80,7 +87,11 @@ module.exports = {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
-        if (!(await hasProfileWithName(interaction, name))) return i.deferUpdate().catch((err) => err), interaction.followUp({ content: `Can't delete profile with the name \`${name}\` as it doesn't exist exists.`, ephemeral: true });
+        if (!(await hasProfileWithName(interaction, name)))
+          return (
+            i.deferUpdate().catch((err) => err),
+            interaction.followUp({ content: `Can't delete profile with the name \`${name}\` as it doesn't exist exists.`, ephemeral: true })
+          );
 
         await deleteProfile(interaction, name);
         profiles = (await interaction.client.mongo.findOne({ _id: interaction.user.id })).profiles;
@@ -153,7 +164,7 @@ module.exports = {
         return i.followUp({ content: `\`${id}\` has been toggled \`${state}\`.`, ephemeral: true });
       }
 
-      // COMBAT_SECTION
+      // COMBAT_SECTION TODO
       let res;
       if (!["up", "down", "left", "right"].includes(id)) res = Game.pokemonSpawned();
 

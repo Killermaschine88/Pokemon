@@ -23,7 +23,10 @@ module.exports = {
 			\`\`\`js\n${input}\n\`\`\`\n**Output**\n\`\`\`json\n${formattedResult}\n\`\`\``;
         await message.channel.send({
           content: messageContent.length > 2000 ? "Output too long to send, attached it" : messageContent,
-          files: messageContent.length > 2000 ? [new Discord.MessageAttachment(Buffer.from("//Input\n" + input + "\n\n//Output\n" + formattedResult), "result.js")] : [],
+          files:
+            messageContent.length > 2000
+              ? [new Discord.MessageAttachment(Buffer.from("//Input\n" + input + "\n\n//Output\n" + formattedResult), "result.js")]
+              : [],
         });
       } catch (err) {
         return message.channel.send({ embeds: [errEmbed(err.stack)] });

@@ -17,7 +17,11 @@ async function withdrawPokemon(id, int, Game) {
 }
 
 async function depositPokemon(id, int, Game) {
-  if (Game.profile.team.length === 1) return int.followUp({ content: `This action would remove your last pokemon from the team which will make you vulnerable to trainers.`, ephemeral: true });
+  if (Game.profile.team.length === 1)
+    return int.followUp({
+      content: `This action would remove your last pokemon from the team which will make you vulnerable to trainers.`,
+      ephemeral: true,
+    });
   const index = id.split("_")[1];
   const pokemon = Game.profile.team[index];
   Game.profile.team.splice(index, 1);
@@ -25,7 +29,10 @@ async function depositPokemon(id, int, Game) {
     if (value.length < 50) {
       value.push(pokemon);
       await Game.message.edit(getPokemonTeamRow(Game.profile.team));
-      return int.followUp({ content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`, ephemeral: true });
+      return int.followUp({
+        content: `Successfully added ${pokemon.name} ${getEmoji(pokemon.name, pokemon.isShiny)} to Storage Page ${key}.`,
+        ephemeral: true,
+      });
     }
   }
 }

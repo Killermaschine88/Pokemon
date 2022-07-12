@@ -1,7 +1,8 @@
 const { getStorageRow } = require("../functions/generatorFunctions");
 const { generateRandomPokemon, pokemonFound } = require("../functions/pokemonFunctions");
 const { getOffset, handleMovement } = require("../functions/mapFunctions");
-const { displayPokemon, getEmoji } = require("../functions/utilFunctions");
+const { getEmoji } = require("../functions/utilFunctions");
+const { displayPokemon } = require("../functions/pokemonFunctions");
 const { MessageEmbed } = require("discord.js");
 const { rows } = require("../constants/discord");
 const { playerMap } = require("../constants/map");

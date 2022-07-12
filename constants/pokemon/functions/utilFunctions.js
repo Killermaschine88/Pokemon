@@ -1,7 +1,6 @@
 const emojis = require("../../JSON/emojiList");
 const { xpList } = require("../../JSON/xpList");
 const { client } = require("../../../index");
-const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 const { titleCase } = require("../../util/functions");
 
 function getEmoji(name, shiny = false) {
@@ -77,31 +76,6 @@ function getXpUntilNextLevel(xp) {
   else return `${xpList[level + 1] - xpLeft}`;
 }
 
-async function displayPokemon(int, pokemon, state, id) {
-  const pokemonEmbed = new MessageEmbed()
-    .setTitle(`Team Member info for ${pokemon.name} ${getPokemonString(pokemon)}`)
-    .setDescription(`Level: **${getPokemonLevel(pokemon.xp)}**\nTypes: **${pokemon.types.join(", ")}**`);
-  pokemonEmbed.addField("Stats", `${returnPokemonStats(pokemon.stats)}`, true);
-  pokemonEmbed.addField("Moves", `${returnPokemonMoves(pokemon.moves)}`, true);
-
-  if (state === "withdraw") {
-    const split = id.split("_");
-    const rows = [
-      new MessageActionRow().addComponents(
-        new MessageButton().setLabel("Withdraw to Team").setCustomId(`withdrawPokemon_${split[1]}_${split[2]}`).setStyle("SUCCESS")
-      ),
-    ];
-    return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
-  } else if (state === "deposit") {
-    const rows = [
-      new MessageActionRow().addComponents(new MessageButton().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("DANGER")),
-    ];
-    return int.followUp({ embeds: [pokemonEmbed], components: rows, ephemeral: true });
-  } else {
-    return int.followUp({ embeds: [pokemonEmbed], ephemeral: true });
-  }
-}
-
 function emojiStringToId(emoji) {
   return emoji.split(":")[2].replace(">", "");
 }
@@ -145,7 +119,6 @@ module.exports = {
   getPokemonString,
   returnPokemonMoves,
   returnPokemonStats,
-  displayPokemon,
   emojiStringToId,
   getRandomNature,
   getXpUntilNextLevel,

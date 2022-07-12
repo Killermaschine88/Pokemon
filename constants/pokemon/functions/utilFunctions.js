@@ -64,6 +64,19 @@ function getPokemonLevel(xp) {
   return `${level}`;
 }
 
+function getXpUntilNextLevel(xp) {
+  let i = 1;
+  let level = 0;
+  let xpLeft = xp;
+  while (xpLeft >= 0 && xpLeft - xpList[i] >= 0) {
+    xpLeft = xpLeft - xpList[i];
+    level++;
+    i++;
+  }
+  if (level === 100) return "MAX";
+  else return `${xpList[level + 1] - xpLeft}`;
+}
+
 async function displayPokemon(int, pokemon, state, id) {
   const pokemonEmbed = new MessageEmbed()
     .setTitle(`Team Member info for ${pokemon.name} ${getPokemonString(pokemon)}`)
@@ -135,4 +148,5 @@ module.exports = {
   displayPokemon,
   emojiStringToId,
   getRandomNature,
+  getXpUntilNextLevel,
 };

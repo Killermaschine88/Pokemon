@@ -1,4 +1,3 @@
-const { MessageEmbed } = require("discord.js");
 const { generatePokemonInfoImage } = require("../../constants/pokemon/functions/canvasFunctions");
 const { generatePokemonJSON } = require("../../constants/util/generators");
 const pokemonList = require("../../constants/JSON/pokemonList.json");
@@ -13,8 +12,8 @@ module.exports = {
     }
 
     if (message.content.includes("pokemon")) {
-      const img = await generatePokemonInfoImage(pokemonList["CHIMCHAR"]);
-      message.channel.send({ embeds: [new MessageEmbed().setImage(img)] });
+      const pokemonImage = await generatePokemonInfoImage(pokemonList["LUGIA"]);
+      message.channel.send({ files: [pokemonImage] });
     }
   },
 };

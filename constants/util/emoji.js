@@ -1,4 +1,4 @@
-const { returnTypes, returnStats, returnMoves, returnSprites } = require("./apiFunctions");
+const { returnTypes, returnStats, returnMoves, returnSprites, returnIV } = require("./apiFunctions");
 const { titleCase } = require("./functions");
 const sharp = require("sharp");
 const axios = require("axios");
@@ -53,11 +53,12 @@ async function generatePokemonEntry(name) {
   obj["name"] = titleCase(pokemon.name);
   obj["id"] = pokemon.name.toUpperCase();
   obj["pokemonId"] = pokemon.id;
-  obj["xp"] = 0;
+  obj["xp"] = pokemon.base_experience;
   obj["heldItem"] = null;
   obj["isShiny"] = false;
   obj["types"] = returnTypes(pokemon.types);
   obj["stats"] = returnStats(pokemon.stats);
+  obj["iv"] = returnIV(pokemon.stats);
   obj["moves"] = await returnMoves(pokemon.moves);
   obj["sprites"] = returnSprites(pokemon.sprites);
 

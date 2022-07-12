@@ -14,7 +14,7 @@ function calculateDamage(pokemon, move) {
 }
 
 function getDefenseStat(pokemon, move) {
-  return move.class === "physical" ? pokemon.stats["defense"] : pokemon.stats["special-defense"];
+  return move.class === "Physical" ? pokemon.stats["defense"] : pokemon.stats["special-defense"];
 }
 
 function getCriticalMultiplier(pokemon) {

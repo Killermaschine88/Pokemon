@@ -19,6 +19,15 @@ function returnStats(statList) {
   return pokemonStats;
 }
 
+function returnIV(statList) {
+  let pokemonStats = {};
+
+  for (const stat of statList) {
+    pokemonStats[stat.stat.name] = 0;
+  }
+  return pokemonStats;
+}
+
 async function returnMoves(moveList) {
   // Move Information: https://pokeapi.co/api/v2/move/moveName
   let pokemonMoves = [];
@@ -55,7 +64,7 @@ async function returnMoves(moveList) {
         data: {
           power: moveData.power,
           accuracy: moveData.accuracy,
-          class: moveData.damage_class.name,
+          class: titleCase(moveData.damage_class.name),
         },
       });
     }
@@ -80,4 +89,4 @@ function returnSprites(sprites) {
   };
 }
 
-module.exports = { returnTypes, returnStats, returnMoves, returnSprites };
+module.exports = { returnTypes, returnStats, returnMoves, returnSprites, returnIV };

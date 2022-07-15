@@ -165,8 +165,7 @@ async function getStorageRow(Game, int, id) {
 }
 
 function generateEncounterMessage(Game) {
-  const enemy = Game.encounterPokemon;
-  console.log(`found ${enemy.name}`);
+  const enemy = Game.console.log(`found ${enemy.name}`);
   const embed = new MessageEmbed().setTitle("Pokemon Fight").addField(`${Game.profile.team[0].name}`, "a");
 
   // TODO: add functino to generate the embed and also add team id's to pokemon

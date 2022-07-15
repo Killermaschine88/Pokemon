@@ -1,8 +1,15 @@
+const { default: axios } = require("axios");
 const { createCanvas, loadImage, registerFont } = require("canvas");
 const { INFO_BACKGROUND } = require("../constants/links.json");
 const { getXpUntilNextLevel, getPokemonLevel } = require("./utilFunctions");
+const GIFEncoder = require("gifencoder");
+const gifFrames = require("gif-frames");
+const { tmpdir } = require("os");
+const { writeFile } = require("fs/promises");
+const { createWriteStream } = require("fs");
 
 async function generatePokemonInfoImage(pokemon) {
+  const b4 = Date.now();
   // Generate Canvas
   const canvas = createCanvas(400, 300);
   const ctx = canvas.getContext("2d");
@@ -45,8 +52,8 @@ async function generatePokemonInfoImage(pokemon) {
 
   /* IV */
   let ivY = 75;
-  for(const [key, value] of Object.entries(pokemon.iv)) {
-    if(value > 20) ctx.fillStyle = "green"
+  for (const [key, value] of Object.entries(pokemon.iv)) {
+    if (value > 20) ctx.fillStyle = "green";
     else ctx.fillStyle = "red";
     ctx.fillText(`${value}`, 100, ivY);
     ivY += 16;
@@ -59,11 +66,57 @@ async function generatePokemonInfoImage(pokemon) {
   // Level
   ctx.fillText(`Lvl. ${getPokemonLevel(pokemon.xp)}`, 350, 24);
 
-  // Pokemon Image
-  ctx.drawImage(await loadImage(pokemon.isShiny ? pokemon.sprites.front.shiny : pokemon.sprites.front.normal), 200, 30, 135, 135);
+  // Types
+  ctx.fillText("Types", 20, 262);
+  let typeX = 20;
+  for (const type of pokemon.types) {
+    ctx.drawImage(await loadImage(`https://play.pokemonshowdown.com/sprites/types/${type}.png`), typeX, 267);
+    typeX += 35;
+  }
 
-  // Return finished image
-  return canvas.toBuffer();
+  // Pokemon Image
+  const test = true
+  if (test) {
+    const imageUrl = pokemon.isShiny
+      ? `https://play.pokemonshowdown.com/sprites/ani-shiny/${pokemon.name.toLowerCase()}.gif`
+      : `https://play.pokemonshowdown.com/sprites/ani/${pokemon.name.toLowerCase()}.gif`;
+    const buffer = canvas.toBuffer();
+
+    return generateGIF(buffer, imageUrl);
+  } else {
+    ctx.drawImage(await loadImage(pokemon.isShiny ? pokemon.sprites.front.shiny : pokemon.sprites.front.normal), 200, 30, 135, 135);
+    return canvas.toBuffer();
+  }
+}
+
+async function generateGIF(buffer, url) {
+  const filename = `${tmpdir()}/${Math.random().toString()}_n.png`;
+  await writeFile(filename, buffer);
+  const gif = await gifFrames({ url, frames: "all", outputType: "png" });
+
+  const images = await Promise.all(
+    gif.map((img, index) => {
+      const file = filename.replace("_n", `_${index}`);
+      const stream = createWriteStream(file);
+      img.getImage().pipe(stream);
+      return new Promise((res) => stream.on("finish", () => res(file)));
+    })
+  );
+
+  const GIF = new GIFEncoder(400, 300);
+  GIF.start();
+  GIF.setRepeat(0);
+
+  for (const image of images) {
+    const canvas = createCanvas(400, 300);
+    const bg = await loadImage(filename);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(bg, 0, 0);
+    ctx.drawImage(await loadImage(image), 200, 30);
+    GIF.addFrame(ctx);
+  }
+
+  return GIF.out.getData();
 }
 
 module.exports = { generatePokemonInfoImage };

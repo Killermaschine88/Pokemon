@@ -1,8 +1,8 @@
 const { getRandomNumber } = require("../../util/functions");
 const pokemonList = require("../../JSON/pokemonList.json");
 const { ignoredPokemon } = require("../constants/pokemon");
-const { getRandomNature } = require("./utilFunctions");
-const { generatePokemonInfoImage } = require("./canvasFunctions")
+const { generateRandomNature, generateRandomIV } = require("./utilFunctions");
+const { generatePokemonInfoImage } = require("./canvasFunctions");
 const { MessageActionRow, MessageButton } = require("discord.js");
 
 function pokemonFound() {
@@ -12,10 +12,11 @@ function pokemonFound() {
 function generateRandomPokemon() {
   let pokemonNames = Object.keys(pokemonList);
   pokemonNames = pokemonNames.filter((pokemon) => !ignoredPokemon.includes(pokemon));
-  const pokemon = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
+  const pokemon = pokemonList[pokemonNames[Math.floor(Math.random() * pokemonNames.length)]];
   if (isShinyPokemon()) pokemon.isShiny = true;
-  pokemon.nature = getRandomNature();
-  return pokemonList[pokemon];
+  pokemon.iv = generateRandomIV();
+  pokemon.nature = generateRandomNature();
+  return pokemon;
 }
 
 function getStarterPokemon(id) {
@@ -25,7 +26,8 @@ function getStarterPokemon(id) {
     starterPokemon.isShiny = true;
   }
 
-  starterPokemon.nature = getRandomNature();
+  starterPokemon.nature = generateRandomNature();
+  starterPokemon.iv = generateRandomIV();
 
   return starterPokemon;
 }
@@ -35,7 +37,8 @@ function isShinyPokemon() {
 }
 
 async function displayPokemon(int, pokemon, state, id) {
-  const image = await generatePokemonInfoImage(pokemon)
+  const msg = await int.followUp({ content: "Generating stats image...", ephemeral: true });
+  const image = await generatePokemonInfoImage(pokemon);
 
   if (state === "withdraw") {
     const split = id.split("_");

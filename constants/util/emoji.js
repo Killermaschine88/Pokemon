@@ -59,6 +59,7 @@ async function generatePokemonEntry(name) {
   obj["types"] = returnTypes(pokemon.types);
   obj["stats"] = returnStats(pokemon.stats);
   obj["iv"] = returnIV(pokemon.stats);
+  obj["nature"] = null;
   obj["moves"] = await returnMoves(pokemon.moves);
   obj["sprites"] = returnSprites(pokemon.sprites);
 

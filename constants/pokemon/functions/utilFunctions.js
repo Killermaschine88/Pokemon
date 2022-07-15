@@ -1,7 +1,7 @@
 const emojis = require("../../JSON/emojiList");
 const { xpList } = require("../../JSON/xpList");
 const { client } = require("../../../index");
-const { titleCase } = require("../../util/functions");
+const { titleCase, getRandomNumber } = require("../../util/functions");
 
 function getEmoji(name, shiny = false) {
   if (!isNaN(name.toString().charAt(0))) {
@@ -80,7 +80,7 @@ function emojiStringToId(emoji) {
   return emoji.split(":")[2].replace(">", "");
 }
 
-function getRandomNature() {
+function generateRandomNature() {
   // https://bulbapedia.bulbagarden.net/wiki/Nature
   const natures = [
     "Hardy",
@@ -113,6 +113,18 @@ function getRandomNature() {
   return natures[Math.floor(Math.random() * natures.length)];
 }
 
+function generateRandomIV() {
+  return {
+    hp: getRandomNumber(0, 31),
+    attack: getRandomNumber(0, 31),
+    defense: getRandomNumber(0, 31),
+    "special-attack": getRandomNumber(0, 31),
+    "special-defense": getRandomNumber(0, 31),
+    speed: getRandomNumber(0, 31),
+  };
+}
+//"stats": { "hp": 106, "attack": 90, "defense": 130, "special-attack": 90, "special-defense": 154, "speed": 110 },
+
 module.exports = {
   getEmoji,
   getPokemonLevel,
@@ -120,6 +132,7 @@ module.exports = {
   returnPokemonMoves,
   returnPokemonStats,
   emojiStringToId,
-  getRandomNature,
+  generateRandomNature,
   getXpUntilNextLevel,
+  generateRandomIV,
 };

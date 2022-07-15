@@ -4,11 +4,12 @@ const { generateProfileSelection, generateStarterSelection, generateSettingsRow 
 const { withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions/storageFunctions");
 const { InteractionCollector } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/functions/mongoFunctions");
-const { encounterHandler } = require("../../constants/pokemon/handlers/encounterHandler");
+const { battleHandler } = require("../../constants/pokemon/handlers/battleHandler");
 const { menuHandler } = require("../../constants/pokemon/handlers/menuHandler");
 const { badName } = require("../../constants/util/functions");
 const { hasProfileWithName } = require("../../constants/pokemon/functions/mongoFunctions");
 const { settingsHandler } = require("../../constants/pokemon/handlers/settingsHandler");
+const { startEncounter } = require("../../constants/pokemon/functions/encounterFunctions");
 
 module.exports = {
   name: "pokemon",
@@ -166,21 +167,19 @@ module.exports = {
 
       // COMBAT_SECTION TODO
       let res;
-      if (!["up", "down", "left", "right"].includes(id)) res = Game.pokemonSpawned();
+      if (["up", "down", "left", "right"].includes(id)) res = Game.pokemonSpawned();
 
       if (res?.spawned) {
-        return encounterHandler(Game, res.pokemon, "pokemonEncounter");
+        return startEncounter(Game, [res.pokemon]);
       }
 
       if ([""].includes(id)) {
-        const combatResult = await encounterHandler(Game, enemyPokemon, id);
-        if (combatResult.state === "encounterDead") {
-        }
+        const combatResult = await battleHandler(Game, enemyPokemon, id);
       }
     });
 
     collector.on("end", async (__, reason) => {
-      await reply.edit({ content: reason !== "time" ? `Command stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
+      await reply.edit({ content: reason !== "time" ? `Game stopped because: **${reason}**` : null, components: [] }).catch((err) => err);
 
       if (Game?.isStarted()) {
         try {

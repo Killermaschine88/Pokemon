@@ -1,42 +1,42 @@
-const { MessageActionRow, MessageButton, Modal, TextInputComponent } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } = require("discord.js");
 
-const row1 = new MessageActionRow().addComponents(
-  new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle("SECONDARY").setDisabled(true),
-  new MessageButton().setEmoji("🔼").setCustomId("up").setStyle("SECONDARY"),
-  new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle("SECONDARY").setDisabled(true)
+const row1 = new ActionRowBuilder().addComponents(
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle("Secondary").setDisabled(true),
+  new ButtonBuilder().setEmoji("🔼").setCustomId("up").setStyle("Secondary"),
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle("Secondary").setDisabled(true)
 );
-const row2 = new MessageActionRow().addComponents(
-  new MessageButton().setEmoji("◀️").setCustomId("left").setStyle("SECONDARY"),
-  new MessageButton().setEmoji("<:menuicon:923000621370589254>").setCustomId("menu").setStyle("SECONDARY"),
-  new MessageButton().setEmoji("▶️").setCustomId("right").setStyle("SECONDARY")
+const row2 = new ActionRowBuilder().addComponents(
+  new ButtonBuilder().setEmoji("◀️").setCustomId("left").setStyle("Secondary"),
+  new ButtonBuilder().setEmoji("<:menuicon:923000621370589254>").setCustomId("menu").setStyle("Secondary"),
+  new ButtonBuilder().setEmoji("▶️").setCustomId("right").setStyle("Secondary")
 );
-const row3 = new MessageActionRow().addComponents(
-  new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle("SECONDARY").setDisabled(true),
-  new MessageButton().setEmoji("🔽").setCustomId("down").setStyle("SECONDARY"),
-  new MessageButton().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle("SECONDARY").setDisabled(true)
+const row3 = new ActionRowBuilder().addComponents(
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle("Secondary").setDisabled(true),
+  new ButtonBuilder().setEmoji("🔽").setCustomId("down").setStyle("Secondary"),
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle("Secondary").setDisabled(true)
 );
 const rows = [row1, row2, row3];
 
-const newProfileModal = new Modal()
-  .setCustomId("newProfileModal")
+const newProfileModal = new ModalBuilder()
+  .setCustomId("newProfileModalBuilder")
   .setTitle("Profile Name")
   .addComponents(
-    new MessageActionRow().addComponents(
-      new TextInputComponent()
+    new ActionRowBuilder().addComponents(
+      new TextInputBuilder()
         .setCustomId("name")
         .setLabel("Your name for the Profile (min 5, max 25)")
-        .setStyle("SHORT")
+        .setStyle("Short")
         .setMinLength(5)
         .setMaxLength(25)
     )
   );
 
-const deleteProfileModal = new Modal()
-  .setCustomId("deleteProfileModal")
+const deleteProfileModal = new ModalBuilder()
+  .setCustomId("deleteProfileModalBuilder")
   .setTitle("Profile Name")
   .addComponents(
-    new MessageActionRow().addComponents(
-      new TextInputComponent().setCustomId("name").setLabel("Profile Name to delete").setStyle("SHORT").setMinLength(5).setMaxLength(25)
+    new ActionRowBuilder().addComponents(
+      new TextInputBuilder().setCustomId("name").setLabel("Profile Name to delete").setStyle("Short").setMinLength(5).setMaxLength(25)
     )
   );
 

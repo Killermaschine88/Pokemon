@@ -13,7 +13,7 @@ async function menuHandler(interaction, Game) {
   if (id === "save") {
     // Saving profile
     await saveProfile(interaction, Game);
-    return interaction.followUp({ content: "Saved successfully.", ephemeral: true });
+    return interaction.followUp({ content: "Saved Successfully.", ephemeral: true });
   }
 
   if (id === "exitAndSave") {

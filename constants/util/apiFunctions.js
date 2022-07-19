@@ -51,7 +51,7 @@ async function returnMoves(moveList) {
             type: titleCase(moveData.type.name),
             class: moveData.damage_class.name,
             healing: moveData.meta.healing,
-            effect: moveData.effect_entries.length >= 1 ? moveData.effect_entries[0].short_effect.replaceAll("$effect_chance% ", "") : null,
+            effect: moveData.effect_entries.length >= 1 ? moveData.effect_entries[0].Short_effect.replaceAll("$effect_chance% ", "") : null,
           },
         });*/
     } else if (["physical", "special"].includes(moveData.damage_class.name)) {

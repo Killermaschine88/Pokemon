@@ -1,5 +1,5 @@
 const { default: axios } = require("axios");
-const { createCanvas, loadImage, registerFont } = require("canvas");
+const { Canvas, loadImage, FontLibrary } = require("skia-canvas");
 const { INFO_BACKGROUND } = require("../constants/links.json");
 const { getXpUntilNextLevel, getPokemonLevel } = require("./utilFunctions");
 const GIFEncoder = require("gifencoder");
@@ -11,14 +11,14 @@ const { createWriteStream } = require("fs");
 async function generatePokemonInfoImage(pokemon) {
   const b4 = Date.now();
   // Generate Canvas
-  const canvas = createCanvas(400, 300);
+  const canvas = new Canvas(400, 300);
   const ctx = canvas.getContext("2d");
 
   // Setting background
   ctx.drawImage(await loadImage(INFO_BACKGROUND), 0, 0);
 
   // Setting font and size https://github.com/castdrian/team-preview/blob/main/data/font/OpenSans-Semibold.ttf
-  const pokemonFont = registerFont("./constants/pokemon/constants/OpenSans-Semibold.ttf", { family: "OpenSans-Semibold" });
+  FontLibrary.use("pokemonFont", "./constants/pokemon/constants/OpenSans-Semibold.ttf");
   ctx.font = "10px pokemonFont";
 
   // Placing pokemon info
@@ -75,17 +75,17 @@ async function generatePokemonInfoImage(pokemon) {
   }
 
   // Pokemon Image
-  const test = true
+  const test = false;
   if (test) {
     const imageUrl = pokemon.isShiny
       ? `https://play.pokemonshowdown.com/sprites/ani-shiny/${pokemon.name.toLowerCase()}.gif`
       : `https://play.pokemonshowdown.com/sprites/ani/${pokemon.name.toLowerCase()}.gif`;
-    const buffer = canvas.toBuffer();
+    const buffer = await canvas.toBuffer("png");
 
     return generateGIF(buffer, imageUrl);
   } else {
     ctx.drawImage(await loadImage(pokemon.isShiny ? pokemon.sprites.front.shiny : pokemon.sprites.front.normal), 200, 30, 135, 135);
-    return canvas.toBuffer();
+    return canvas.toBuffer("png");
   }
 }
 
@@ -106,15 +106,18 @@ async function generateGIF(buffer, url) {
   const GIF = new GIFEncoder(400, 300);
   GIF.start();
   GIF.setRepeat(0);
+  GIF.setDelay(50);
 
   for (const image of images) {
-    const canvas = createCanvas(400, 300);
+    const canvas = new Canvas(400, 300);
     const bg = await loadImage(filename);
     const ctx = canvas.getContext("2d");
     ctx.drawImage(bg, 0, 0);
     ctx.drawImage(await loadImage(image), 200, 30);
     GIF.addFrame(ctx);
   }
+
+  GIF.finish();
 
   return GIF.out.getData();
 }

@@ -13,8 +13,7 @@ module.exports = {
 
     if (message.content.includes("pokemon")) {
       const pokemonImage = await generatePokemonInfoImage(pokemonList["LUGIA"]);
-      console.log(pokemonImage)
-      message.channel.send({ files: [{ attachment: pokemonImage, name: "test.gif" }] });
+      message.channel.send({ files: [{ attachment: pokemonImage, name: "stats.gif" }] });
     }
   },
 };

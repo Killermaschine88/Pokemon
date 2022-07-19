@@ -1,13 +1,13 @@
+const { InteractionType } = require("discord.js");
+
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
     //Slash Commands
-    if (interaction.isCommand()) {
-      let commandExecute = interaction.commandName;
-
-      if (interaction.options.getSubcommand(false) != null) {
-        commandExecute = interaction.commandName + interaction.options.getSubcommand(false);
-      }
+    if (interaction.type === InteractionType.ApplicationCommand) {
+      const commandExecute = interaction.options.getSubcommand(false)
+        ? (commandExecute = interaction.commandName + interaction.options.getSubcommand(false))
+        : interaction.commandName;
 
       const command = interaction.client.slashCommands.get(commandExecute);
 
@@ -15,7 +15,7 @@ module.exports = {
         await interaction.deferReply({ ephemeral: command?.ephemeral ? true : false });
         await command.execute(interaction);
       } catch (e) {
-        log(e.stack, "ERROR");
+        log(e, "ERROR");
       }
     }
   },

@@ -2,7 +2,7 @@ const { GameMap } = require("../../constants/pokemon/classes/map");
 const { newProfileModal, deleteProfileModal } = require("../../constants/pokemon/constants/discord");
 const { generateProfileSelection, generateStarterSelection, generateSettingsRow } = require("../../constants/pokemon/functions/generatorFunctions");
 const { withdrawPokemon, depositPokemon } = require("../../constants/pokemon/functions/storageFunctions");
-const { InteractionCollector } = require("discord.js");
+const { InteractionCollector, InteractionType } = require("discord.js");
 const { createProfile, saveProfile, deleteProfile } = require("../../constants/pokemon/functions/mongoFunctions");
 const { battleHandler } = require("../../constants/pokemon/handlers/battleHandler");
 const { menuHandler } = require("../../constants/pokemon/handlers/menuHandler");
@@ -34,7 +34,7 @@ module.exports = {
     // Collector
     collector.on("collect", async (i) => {
       if (i.user.id !== interaction.user.id) return;
-      if (!i.isButton() && !i.isModalSubmit() && !i.isSelectMenu()) return;
+      if (!i.type === InteractionType.MessageComponent && !i.type === InteractionType.ModalSubmit) return;
       const id = i?.values?.[0] || i.customId;
 
       if (!["newProfile", "deleteProfile"].includes(id)) {
@@ -53,18 +53,18 @@ module.exports = {
         return Game.setStarted().setProfileIndex(profileId).setVariables(interaction, collector).setMessage(reply).updateMessage();
       }
 
-      // Profile Generation Modal
+      // Profile Generation ModalBuilder
       if (id === "newProfile") {
         return i.showModal(newProfileModal);
       }
 
-      // Profile deletion modal
+      // Profile deletion ModalBuilder
       if (id === "deleteProfile") {
         return i.showModal(deleteProfileModal);
       }
 
       // Handles name input
-      if (id === "newProfileModal") {
+      if (id === "newProfileModalBuilder") {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");
@@ -84,7 +84,7 @@ module.exports = {
       }
 
       // Handle profile deletion
-      if (id === "deleteProfileModal") {
+      if (id === "deleteProfileModalBuilder") {
         await i.deferUpdate().catch((err) => err);
         name = i.fields.getTextInputValue("name").trim();
         if (badName(name)) return i.deferUpdate().catch((err) => err), collector.stop("Name input was invalid");

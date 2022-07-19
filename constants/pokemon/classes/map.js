@@ -3,7 +3,7 @@ const { generateRandomPokemon, pokemonFound } = require("../functions/pokemonFun
 const { getOffset, handleMovement } = require("../functions/mapFunctions");
 const { getEmoji } = require("../functions/utilFunctions");
 const { displayPokemon } = require("../functions/pokemonFunctions");
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { rows } = require("../constants/discord");
 const { playerMap } = require("../constants/map");
 global.currentlyPlaying = {}; // "userId": { pos: { x, y }, playing: true }
@@ -18,7 +18,7 @@ class GameMap {
       this.lastMove = existingSave.game.lastMove;
       this.lastField = existingSave.game.lastField;
       this.newField = existingSave.game.newField;
-      this.embed = new MessageEmbed().setDescription(this.renderMap());
+      this.embed = new EmbedBuilder().setDescription(this.renderMap());
     } else {
       const map = playerMap;
 

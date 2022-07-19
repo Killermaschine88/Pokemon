@@ -36,7 +36,7 @@ module.exports = {
 };
 
 function errEmbed(msg) {
-  const embed = new Discord.MessageEmbed().setTitle("Error!").setDescription(`\`\`\`\n${msg}\`\`\``).setColor("RED");
+  const embed = new Discord.EmbedBuilder().setTitle("Error!").setDescription(`\`\`\`\n${msg}\`\`\``).setColor("RED");
 
   return embed;
 }

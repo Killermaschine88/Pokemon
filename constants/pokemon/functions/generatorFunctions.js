@@ -1,7 +1,7 @@
 const { getPokemonString, getEmoji } = require("./utilFunctions");
 const { getStarterPokemon } = require("./pokemonFunctions");
 const { emojiStringToId } = require("./utilFunctions");
-const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, SelectMenuBuilder } = require("discord.js");
+const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, SelectMenuBuilder, ButtonStyle } = require("discord.js");
 
 function generateProfileSelection(list) {
   //Embed
@@ -13,7 +13,7 @@ function generateProfileSelection(list) {
         value: `Starter: ${getPokemonString(profile.profile.starterPokemon)}\nPokemon Dollars: **${profile.profile.pokemonDollars}**\nCreated: ${
           profile.profile.created ? `<t:${profile.profile.created}>` : "Unknown"
         }`,
-        inline: true
+        inline: true,
       });
     }
   } else {
@@ -25,7 +25,9 @@ function generateProfileSelection(list) {
   if (list.length > 0) {
     let index = 0;
     for (const profile of list) {
-      row.components.push(new ButtonBuilder().setCustomId(`profile_${index}`).setLabel(`Load: ${profile.profile.name}`).setStyle("Secondary"));
+      row.components.push(
+        new ButtonBuilder().setCustomId(`profile_${index}`).setLabel(`Load: ${profile.profile.name}`).setStyle(ButtonStyle.Secondary)
+      );
       index++;
     }
     if (row.components.length < 3)
@@ -33,7 +35,8 @@ function generateProfileSelection(list) {
   } else {
     row.components.push(new ButtonBuilder().setCustomId("newProfile").setLabel("Create new Profle").setStyle("Success"));
   }
-  if (row.components.length > 1) row.components.push(new ButtonBuilder().setCustomId("deleteProfile").setLabel("Delete Profle").setStyle("Danger"));
+  if (row.components.length > 1)
+    row.components.push(new ButtonBuilder().setCustomId("deleteProfile").setLabel("Delete Profle").setStyle(ButtonStyle.Danger));
 
   return { embeds: [embed], components: [row] };
 }
@@ -44,17 +47,30 @@ function generateStarterSelection() {
   const chimcharStarter = getStarterPokemon("CHIMCHAR");
   const piplupStarter = getStarterPokemon("PIPLUP");
   const embed = new EmbedBuilder().setTitle("Choose your Starter Pokemon");
-  embed
-    .addField(`${getPokemonString(turtwigStarter)}`, "**Type:** Grass", true)
-    .addField(`${getPokemonString(chimcharStarter)}`, "**Type:** Fire", true)
-    .addField(`${getPokemonString(piplupStarter)}`, "**Type:** Water", true);
+  embed.addFields([
+    { name: `${getPokemonString(turtwigStarter)}`, value: `**Type:** ${turtwigStarter.type}`, inline: true },
+    { name: `${getPokemonString(chimcharStarter)}`, value: "**Type:** Fire", inline: true },
+    { name: `${getPokemonString(piplupStarter)}`, value: "**Type:** Water", inline: true },
+  ]);
 
   //Rows
   const rows = [
     new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId("starter0").setLabel("Turtwig").setStyle("Secondary").setEmoji(getEmoji("TURTWIG", turtwigStarter.isShiny)),
-      new ButtonBuilder().setCustomId("starter1").setLabel("Chimchar").setStyle("Secondary").setEmoji(getEmoji("CHIMCHAR", chimcharStarter.isShiny)),
-      new ButtonBuilder().setCustomId("starter2").setLabel("Piplup").setStyle("Secondary").setEmoji(getEmoji("PIPLUP", piplupStarter.isShiny))
+      new ButtonBuilder()
+        .setCustomId("starter0")
+        .setLabel("Turtwig")
+        .setStyle(ButtonStyle.Secondary)
+        .setEmoji(getEmoji("TURTWIG", turtwigStarter.isShiny)),
+      new ButtonBuilder()
+        .setCustomId("starter1")
+        .setLabel("Chimchar")
+        .setStyle(ButtonStyle.Secondary)
+        .setEmoji(getEmoji("CHIMCHAR", chimcharStarter.isShiny)),
+      new ButtonBuilder()
+        .setCustomId("starter2")
+        .setLabel("Piplup")
+        .setStyle(ButtonStyle.Secondary)
+        .setEmoji(getEmoji("PIPLUP", piplupStarter.isShiny))
     ),
   ];
 
@@ -70,15 +86,15 @@ function generateMenu() {
   const options = [
     { label: "Back to Game", emoji: { id: "977989090714714183" }, value: "movement" },
     //{ label: "Pokedex", emoji: "989794527952908328", value: "pokedex" },
-    { label: "Pokemon Team", emoji: {id:"989792754169167903"}, value: "pokemonTeam" },
-    { label: "Pokemon Storage", emoji: { id:"829731463804485653"}, value: "pokemonStorage" },
+    { label: "Pokemon Team", emoji: { id: "989792754169167903" }, value: "pokemonTeam" },
+    { label: "Pokemon Storage", emoji: { id: "829731463804485653" }, value: "pokemonStorage" },
     //{ label: "Bag", emoji: "989794285002047518", value: "bag" },
-    { label: "Settings", emoji: { id:"859388128040976384"}, value: "settings" },
-    { label: "Save", emoji: { id:"989807222051721216"}, value: "save" },
-    { label: "Exit and Save", emoji: { id:"863398571302060032"}, value: "exitAndSave" },
+    { label: "Settings", emoji: { id: "859388128040976384" }, value: "settings" },
+    { label: "Save", emoji: { id: "989807222051721216" }, value: "save" },
+    { label: "Exit and Save", emoji: { id: "863398571302060032" }, value: "exitAndSave" },
   ];
 
-  rows[0].components[0].addOptions(options)
+  rows[0].components[0].addOptions(options);
 
   return { components: rows };
 }
@@ -100,7 +116,7 @@ function getPokemonTeamRow(team) {
     });
   }
 
-  rows[0].components[0].addOptions(options)
+  rows[0].components[0].addOptions(options);
 
   return { components: rows };
 }
@@ -143,7 +159,7 @@ async function getStorageRow(Game, int, id) {
       ),
     ];
 
-    let selectOptions = []
+    let selectOptions = [];
     for (const pokemon of storage) {
       if (rows[rowAmount].components[0].options.length === 24) {
         rows[rowAmount].components[0].addOptions(selectOptions);
@@ -173,7 +189,7 @@ async function getStorageRow(Game, int, id) {
 
 function generateEncounterMessage(Game) {
   const enemy = Game.console.log(`found ${enemy.name}`);
-  const embed = new EmbedBuilder().setTitle("Pokemon Fight").addField(`${Game.profile.team[0].name}`, "a");
+  const embed = new EmbedBuilder().setTitle("Pokemon Fight")
 
   // TODO: add functino to generate the embed and also add team id's to pokemon
 
@@ -188,9 +204,10 @@ function generateSettingsRow() {
       new SelectMenuBuilder().setPlaceholder("Choose the Setting to toggle").setMinValues(1).setMaxValues(1).setCustomId("settingsSelect")
     ),
   ];
+  
   const options = [
-    { label: "Back to Menu", value: "backToMenu", emoji: "977989090714714183" },
-    { label: "Show other players in the Map", value: "showOtherPlayers", emoji: "👪" },
+    { label: "Back to Menu", value: "backToMenu", emoji: { id: "977989090714714183" } },
+    { label: "Show other players in the Map", value: "showOtherPlayers", emoji: { name: "👪" } },
   ];
 
   rows[0].components[0].addOptions(options);

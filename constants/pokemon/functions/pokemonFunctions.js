@@ -3,7 +3,7 @@ const pokemonList = require("../../JSON/pokemonList.json");
 const { ignoredPokemon } = require("../constants/pokemon");
 const { generateRandomNature, generateRandomIV } = require("./utilFunctions");
 const { generatePokemonInfoImage } = require("./canvasFunctions");
-const { ActionRowBuilder, ButtonBuilder } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 
 function pokemonFound() {
   return getRandomNumber(0, 10) <= 5; //FIXME: Change 10 to 100 again later for 5% chance
@@ -37,7 +37,6 @@ function isShinyPokemon() {
 }
 
 async function displayPokemon(int, pokemon, state, id) {
-  const msg = await int.followUp({ content: "Generating stats image...", ephemeral: true });
   const image = await generatePokemonInfoImage(pokemon);
 
   if (state === "withdraw") {
@@ -50,7 +49,9 @@ async function displayPokemon(int, pokemon, state, id) {
     return int.followUp({ files: [image], components: rows, ephemeral: true });
   } else if (state === "deposit") {
     const rows = [
-      new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle("Danger")),
+      new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setLabel("Deposit to Storage").setCustomId(`depositPokemon_${id}`).setStyle(ButtonStyle.Danger)
+      ),
     ];
     return int.followUp({ files: [image], components: rows, ephemeral: true });
   } else {

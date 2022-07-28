@@ -1,4 +1,3 @@
-const { default: axios } = require("axios");
 const { Canvas, loadImage, FontLibrary } = require("skia-canvas");
 const { INFO_BACKGROUND } = require("../constants/links.json");
 const { getXpUntilNextLevel, getPokemonLevel } = require("./utilFunctions");

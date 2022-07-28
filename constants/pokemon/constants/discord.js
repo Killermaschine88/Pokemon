@@ -1,19 +1,19 @@
-const { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, ButtonStyle } = require("discord.js");
 
 const row1 = new ActionRowBuilder().addComponents(
-  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle("Secondary").setDisabled(true),
-  new ButtonBuilder().setEmoji("🔼").setCustomId("up").setStyle("Secondary"),
-  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle("Secondary").setDisabled(true)
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("x").setStyle(ButtonStyle.Secondary).setDisabled(true),
+  new ButtonBuilder().setEmoji("🔼").setCustomId("up").setStyle(ButtonStyle.Secondary),
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xx").setStyle(ButtonStyle.Secondary).setDisabled(true)
 );
 const row2 = new ActionRowBuilder().addComponents(
-  new ButtonBuilder().setEmoji("◀️").setCustomId("left").setStyle("Secondary"),
-  new ButtonBuilder().setEmoji("<:menuicon:923000621370589254>").setCustomId("menu").setStyle("Secondary"),
-  new ButtonBuilder().setEmoji("▶️").setCustomId("right").setStyle("Secondary")
+  new ButtonBuilder().setEmoji("◀️").setCustomId("left").setStyle(ButtonStyle.Secondary),
+  new ButtonBuilder().setEmoji("<:menuicon:923000621370589254>").setCustomId("menu").setStyle(ButtonStyle.Secondary),
+  new ButtonBuilder().setEmoji("▶️").setCustomId("right").setStyle(ButtonStyle.Secondary)
 );
 const row3 = new ActionRowBuilder().addComponents(
-  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle("Secondary").setDisabled(true),
-  new ButtonBuilder().setEmoji("🔽").setCustomId("down").setStyle("Secondary"),
-  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle("Secondary").setDisabled(true)
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxx").setStyle(ButtonStyle.Secondary).setDisabled(true),
+  new ButtonBuilder().setEmoji("🔽").setCustomId("down").setStyle(ButtonStyle.Secondary),
+  new ButtonBuilder().setEmoji("<:air:962820785666416730>").setCustomId("xxxxx").setStyle(ButtonStyle.Secondary).setDisabled(true)
 );
 const rows = [row1, row2, row3];
 

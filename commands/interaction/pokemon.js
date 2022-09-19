@@ -34,7 +34,7 @@ module.exports = {
     // Collector
     collector.on("collect", async (i) => {
       if (i.user.id !== interaction.user.id) return;
-      if (i.type !== InteractionType.MessageComponent && i.type !== InteractionType.ModalSubmit) return;
+      if (!i.type == InteractionType.MessageComponent && !i.type == InteractionType.ModalSubmit) return;
       const id = i?.values?.[0] || i.customId;
 
       if (!["newProfile", "deleteProfile"].includes(id)) {
